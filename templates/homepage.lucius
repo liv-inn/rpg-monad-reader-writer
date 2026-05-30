@@ -1,0 +1,72 @@
+.hero {
+    max-width: 920px;
+    margin: 3rem auto 2rem auto;
+    padding: 2.5rem;
+    background: #111827;
+    color: #f9fafb;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.30);
+}
+
+.hero h1 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 2.7rem;
+    color: #c084fc;
+}
+
+.hero .subtitle {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #34d399;
+}
+
+.hero p {
+    line-height: 1.75;
+    margin-bottom: 1rem;
+}
+
+.actions {
+    margin-top: 2rem;
+}
+
+.btn {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.85rem 1.20rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: #7c3aed;
+    color: #ffffff;
+}
+
+.btn-secondary {
+    background: #1f2937;
+    color: #f9fafb;
+    border: 1px solid #374151;
+}
+
+.section-box {
+    max-width: 920px;
+    margin: 0 auto 1.5rem auto;
+    padding: 1.75rem;
+    background: #f9fafb;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+}
+
+.section-box h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #111827;
+}
+
+.section-box p,
+.section-box li {
+    line-height: 1.7;
+}

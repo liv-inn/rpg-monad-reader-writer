@@ -1,0 +1,15 @@
+<div .section-box>
+    <h1>Personagem criado
+    <p>
+        <strong>Nome:
+        \ #{nome}
+    <p>
+        <strong>Classe:
+        \ #{classe}
+    <p>
+        <strong>Dificuldade:
+        \ #{dificuldade}
+    <p>
+        Esta etapa confirma que o formulário e a rota POST estão funcionando.
+    <p>
+        <a href=@{CharacterR}>Voltar

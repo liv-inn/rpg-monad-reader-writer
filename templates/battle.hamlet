@@ -1,0 +1,32 @@
+<div .hero>
+    <h1>Combate
+    <p .subtitle>
+        Demonstração de Reader + Writer aplicada ao sistema de batalha.
+
+<div .section-box>
+    <h2>Resumo do combate
+    <p>
+        Jogador:
+        <strong>#{playerName player}
+    <p>
+        Classe:
+        <strong>#{prettyPlayerClass (playerClass player)}
+    <p>
+        Dificuldade:
+        <strong>#{prettyDifficulty (playerDifficulty player)}
+    <p>
+        <strong>Descrição:
+        \ #{description}
+
+<div .section-box>
+    <h2>Log da batalha
+    $if null logs
+        <p>Nenhum evento registrado.
+    $else
+        <ul>
+            $forall entry <- logs
+                <li>#{entry}
+
+<div .section-box>
+    <p>
+        <a .btn .btn-secondary href=@{ExploreR}>Voltar para exploração
