@@ -10,6 +10,7 @@ module Handler.Character where
 import Import
 import Domain.Player
 import Domain.World
+import Domain.Battle (initialPlayerHp)
 import Domain.SessionLog
 
 getCharacterR :: Handler Html
@@ -42,6 +43,8 @@ postCharacterR = do
                     setSession "player-class" clsTxt
                     setSession "player-difficulty" diffTxt
                     setSession "game-save-id" (toPathPiece gameSaveId)
+                    setSession "player-hp" (tshow (initialPlayerHp cls))
+                    setSession "player-potions" "1"
                     clearLogsFromSession
 
                     defaultLayout $ do

@@ -1,6 +1,3 @@
--- By default this file is used by `parseRoutesFile` in Foundation.hs
--- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
-
 /static StaticR Static appStatic
 /auth   AuthR   Auth   getAuth
 
@@ -13,6 +10,6 @@
 
 /profile ProfileR GET
 /character CharacterR GET POST
-/explore ExploreR GET
-/battle BattleR GET
+/explore ExploreR GET POST
+/battle BattleR GET POST
 /logs LogsR GET
