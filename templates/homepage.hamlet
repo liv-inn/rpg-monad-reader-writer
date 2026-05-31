@@ -10,8 +10,8 @@
         a Writer será utilizada para registrar o histórico completo da aventura.
 
     <div .actions>
-<a .btn .btn-primary href=@{CharacterR}>Novo jogo 
-<a .btn .btn-secondary href=@{ExploreR}>Explorar (demo)
+        <a .btn .btn-primary href=@{StoryR}>Novo jogo
+        <a .btn .btn-secondary href=@{ExploreR}>Explorar (demo)
 <div .section-box>
     <h2>Conceito do projeto
     <p>

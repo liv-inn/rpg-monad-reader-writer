@@ -45,6 +45,7 @@ import Handler.Home
 import Handler.Comment
 import Handler.Profile
 import Handler.Character
+import Handler.Story
 import Handler.Explore
 import Handler.Battle
 import Domain.SessionLog

@@ -12,6 +12,7 @@ import Domain.Player
 import Domain.World
 import Domain.Battle
 import Domain.SessionLog
+import System.Random (randomRIO)
 
 -- ── Chaves de sessão para estado da batalha ───────────────────────────────────
 
@@ -45,7 +46,8 @@ getBattleState player cfg = do
             let php = case mSavedHp >>= readMay . unpack of
                           Just hp -> hp
                           Nothing -> initialPlayerHp (playerClass player)
-                enemy = buildEnemy cfg
+                (enemy, eLogs) = runGameM cfg buildEnemyM
+            appendLogsToSession eLogs
             saveBattleState (BattleState php (enemyHp enemy) 0)
             pure $ BattleState php (enemyHp enemy) 0
 
@@ -68,8 +70,11 @@ getBattleR = withPlayerB $ \player cfg -> do
     -- Sempre começa uma batalha nova ao entrar via GET, mas preserva HP acumulado
     clearBattleState
     bs <- getBattleState player cfg
-    let php   = bsPlayerHp bs
-        enemy = buildEnemy cfg
+    let php    = bsPlayerHp bs
+        enemy  = buildEnemy cfg
+        diff   = playerDifficulty player
+        critPl = critChancePlayer diff
+        critEn = critChanceEnemy  diff
     mPotTxt <- lookupSession keyPotions
     let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
 
@@ -85,8 +90,8 @@ getBattleR = withPlayerB $ \player cfg -> do
                 <p><strong>#{enemyName enemy}
                 <p>HP do inimigo: #{show (enemyHp enemy)}
                 <p>Seu HP: #{show php}
-                <p>Seu poder de ataque: #{show (powerOf (playerClass player))}
-                <p>Dano do inimigo por round: #{show (enemyPower cfg)}
+                <p>Seu poder de ataque: #{show (powerOf (playerClass player))} (chance de crítico: #{show critPl}%)
+                <p>Dano do inimigo por round: #{show (enemyPower cfg)} (chance de crítico: #{show critEn}%)
 
             <div .section-box>
                 <h2>O que deseja fazer?
@@ -220,8 +225,10 @@ postBattleR = withPlayerB $ \player cfg -> do
 
         -- ── Atacar — roda um round de combate ─────────────────────────────────
         _ -> do
-            bs <- getBattleState player cfg
-            let (newBs, result, logs) = runRoundPure cfg player bs
+            bs         <- getBattleState player cfg
+            playerRoll <- liftIO $ randomRIO (0 :: Int, 99)
+            enemyRoll  <- liftIO $ randomRIO (0 :: Int, 99)
+            let (newBs, result, logs) = runRoundPure cfg player bs playerRoll enemyRoll
             appendLogsToSession logs
 
             case result of
@@ -334,9 +341,9 @@ postBattleR = withPlayerB $ \player cfg -> do
 -- Precisamos rodar o GameM (ReaderT + Writer) fora do Handler,
 -- por isso extraímos tudo com runGameM aqui.
 
-runRoundPure :: GameConfig -> Player -> BattleState -> (BattleState, BattleResult, [Text])
-runRoundPure cfg player bs =
-    let ((newBs, result), logs) = runGameM cfg (runRound player bs)
+runRoundPure :: GameConfig -> Player -> BattleState -> Int -> Int -> (BattleState, BattleResult, [Text])
+runRoundPure cfg player bs playerRoll enemyRoll =
+    let ((newBs, result), logs) = runGameM cfg (runRound player bs playerRoll enemyRoll)
     in (newBs, result, logs)
 
 -- ── Helpers de sessão e autenticação ─────────────────────────────────────────

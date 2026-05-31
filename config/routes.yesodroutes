@@ -6,6 +6,8 @@
 
 / HomeR GET POST
 
+/story StoryR GET
+
 /comments CommentR POST
 
 /profile ProfileR GET
