@@ -14,7 +14,7 @@ import Domain.Battle
 import Domain.SessionLog
 import System.Random (randomRIO)
 
--- ── Chaves de sessão para estado da batalha ───────────────────────────────────
+-- ── Chaves de sessão ──────────────────────────────────────────────────────────
 
 keyPlayerHp :: Text
 keyPlayerHp = "battle-player-hp"
@@ -25,14 +25,14 @@ keyEnemyHp = "battle-enemy-hp"
 keyRound :: Text
 keyRound = "battle-round"
 
--- HP do jogador que persiste entre batalhas (inicializado na criação do personagem)
 keyPersistHp :: Text
 keyPersistHp = "player-hp"
 
 keyPotions :: Text
 keyPotions = "player-potions"
 
--- Lê o estado da batalha da sessão. Se não existir, cria um novo.
+-- ── Estado da batalha ─────────────────────────────────────────────────────────
+
 getBattleState :: Player -> GameConfig -> Handler BattleState
 getBattleState player cfg = do
     mPhp <- lookupSession keyPlayerHp
@@ -63,64 +63,47 @@ clearBattleState = do
     deleteSession keyEnemyHp
     deleteSession keyRound
 
--- ── GET /battle — mostra o estado atual da batalha ───────────────────────────
+-- ── Helpers de renderização ───────────────────────────────────────────────────
+
+renderCombat :: Player -> GameConfig -> Text -> Text -> Int -> Int -> Int -> [Text] -> Bool -> Handler Html
+renderCombat player cfg battleHeading enemyNameT enemyHpVal playerHpVal potions roundLogs continuing = do
+    mLoc <- lookupSession "player-location"
+    let currentLocation :: Text
+        currentLocation = fromMaybe "floresta" mLoc
+        battleSubtitle :: Text
+        battleSubtitle = worldName cfg <> " — " <> weather cfg
+        playerNameT :: Text
+        playerNameT = playerName player
+        attackLabel :: Text
+        attackLabel = if continuing then "⚔ Continuar atacando" else "⚔ Atacar"
+    defaultLayout $ do
+        setTitle "Combate"
+        $(widgetFile "battle/combat")
+
+renderResult :: GameConfig -> Text -> Text -> Text -> [Text] -> Text -> Text -> Bool -> Int -> Bool -> Bool -> Handler Html
+renderResult cfg resultIcon resultHeading resultSubtitle resultLogs locVal locLabel showHpRemaining hpRemaining showRetry showCreateChar = do
+    mLoc <- lookupSession "player-location"
+    let currentLocation :: Text
+        currentLocation = fromMaybe "floresta" mLoc
+    defaultLayout $ do
+        setTitle (toHtml resultHeading)
+        $(widgetFile "battle/result")
+
+-- ── GET /battle ───────────────────────────────────────────────────────────────
 
 getBattleR :: Handler Html
 getBattleR = withPlayerB $ \player cfg -> do
-    -- Sempre começa uma batalha nova ao entrar via GET, mas preserva HP acumulado
     clearBattleState
-    bs <- getBattleState player cfg
-    let php    = bsPlayerHp bs
-        enemy  = buildEnemy cfg
-        diff   = playerDifficulty player
-        critPl = critChancePlayer diff
-        critEn = critChanceEnemy  diff
+    bs      <- getBattleState player cfg
     mPotTxt <- lookupSession keyPotions
-    let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
+    let enemy   = buildEnemy cfg
+        potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
+    renderCombat player cfg
+        "⚔ Combate"
+        (enemyName enemy) (bsEnemyHp bs) (bsPlayerHp bs)
+        potions [] False
 
-    defaultLayout $ do
-        setTitle "Combate"
-        [whamlet|
-            <div .hero>
-                <h1>⚔ Combate
-                <p .subtitle>#{worldName cfg} — #{weather cfg}
-
-            <div .section-box>
-                <h2>Inimigo encontrado!
-                <p><strong>#{enemyName enemy}
-                <p>HP do inimigo: #{show (enemyHp enemy)}
-                <p>Seu HP: #{show php}
-                <p>Seu poder de ataque: #{show (powerOf (playerClass player))} (chance de crítico: #{show critPl}%)
-                <p>Dano do inimigo por round: #{show (enemyPower cfg)} (chance de crítico: #{show critEn}%)
-
-            <div .section-box>
-                <h2>O que deseja fazer?
-                <div style="display:flex; gap:12px; align-items:center;">
-                    <form method=post action=@{BattleR}>
-                        ^{tokenWidget}
-                        <input type=hidden name=acao value="atacar">
-                        <button .btn .btn-primary type=submit>⚔ Atacar
-                    <form method=post action=@{BattleR}>
-                        ^{tokenWidget}
-                        <input type=hidden name=acao value="fugir">
-                        <button .btn type=submit>🏃 Fugir
-
-            <div .section-box>
-                <h2>🎒 Inventário
-                $if potions > 0
-                    <p>🧪 Poção Pequena (#{show potions}) — recupera 15 HP
-                    <form method=post action=@{BattleR}>
-                        ^{tokenWidget}
-                        <input type=hidden name=acao value="pocao">
-                        <button .btn type=submit>🧪 Usar Poção
-                $else
-                    <p>Inventário vazio.
-
-            <div .section-box>
-                <p><a href=@{LogsR}>Ver log da aventura
-        |]
-
--- ── POST /battle — processa um round ─────────────────────────────────────────
+-- ── POST /battle ──────────────────────────────────────────────────────────────
 
 postBattleR :: Handler Html
 postBattleR = withPlayerB $ \player cfg -> do
@@ -132,221 +115,106 @@ postBattleR = withPlayerB $ \player cfg -> do
         locLabel = case locVal of
                        "caverna" -> "🕳 Continuar na Caverna"
                        _         -> "🌲 Continuar na Floresta"
-
     case acao of
-        -- ── Poção — cura sem gastar turno ────────────────────────────────────
-        Just "pocao" -> do
+        Just "pocao" -> handlePotion player cfg
+        Just "fugir" -> handleFlee   player cfg locVal locLabel
+        _            -> handleAttack player cfg locVal locLabel
+
+-- ── Poção ─────────────────────────────────────────────────────────────────────
+
+handlePotion :: Player -> GameConfig -> Handler Html
+handlePotion player cfg = do
+    mPotTxt <- lookupSession keyPotions
+    let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
+    if potions <= 0
+        then redirect ExploreR
+        else do
+            bs <- getBattleState player cfg
+            let maxHp   = initialPlayerHp (playerClass player)
+                healed  = min 15 (maxHp - bsPlayerHp bs)
+                newHp   = bsPlayerHp bs + healed
+                newBs   = bs { bsPlayerHp = newHp }
+                newPots = potions - 1
+                enemy   = buildEnemy cfg
+                hdg :: Text
+                hdg     = if bsRound newBs == 0
+                              then "⚔ Combate"
+                              else "⚔ Round " <> tshow (bsRound newBs)
+                logs    = ["🧪 " <> playerName player
+                            <> " usou uma Poção Pequena e recuperou "
+                            <> tshow healed <> " HP!"]
+            saveBattleState newBs
+            setSession keyPotions (tshow newPots)
+            appendLogsToSession logs
+            renderCombat player cfg
+                hdg
+                (enemyName enemy) (bsEnemyHp newBs) (bsPlayerHp newBs)
+                newPots logs True
+
+-- ── Fuga ──────────────────────────────────────────────────────────────────────
+
+handleFlee :: Player -> GameConfig -> Text -> Text -> Handler Html
+handleFlee player cfg locVal locLabel = do
+    mHpTxt <- lookupSession keyPlayerHp
+    clearBattleState
+    forM_ mHpTxt $ \hpTxt -> setSession keyPersistHp hpTxt
+    let logs = [ "Jogador fugiu do combate."
+               , "A sabedoria também é uma forma de sobreviver." ]
+    appendLogsToSession logs
+    renderResult cfg
+        "🏃" "Você fugiu!" "Às vezes recuar é a melhor estratégia."
+        logs locVal locLabel
+        False 0 False False
+
+-- ── Atacar ────────────────────────────────────────────────────────────────────
+
+handleAttack :: Player -> GameConfig -> Text -> Text -> Handler Html
+handleAttack player cfg locVal locLabel = do
+    bs         <- getBattleState player cfg
+    playerRoll <- liftIO $ randomRIO (0 :: Int, 99)
+    enemyRoll  <- liftIO $ randomRIO (0 :: Int, 99)
+    let (newBs, result, logs) = runRoundPure cfg player bs playerRoll enemyRoll
+    appendLogsToSession logs
+
+    case result of
+        Ongoing -> do
+            saveBattleState newBs
             mPotTxt <- lookupSession keyPotions
             let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
-            if potions <= 0
-                then redirect ExploreR
-                else do
-                    bs <- getBattleState player cfg
-                    let maxHp  = initialPlayerHp (playerClass player)
-                        healed = min 15 (maxHp - bsPlayerHp bs)
-                        newHp  = bsPlayerHp bs + healed
-                        newBs  = bs { bsPlayerHp = newHp }
-                        newPots = potions - 1
-                        enemy   = buildEnemy cfg
-                        hdg :: Text
-                        hdg     = if bsRound newBs == 0 then "⚔ Combate" else "⚔ Round " <> tshow (bsRound newBs)
-                        logs    = ["🧪 " <> playerName player <> " usou uma Poção Pequena e recuperou " <> tshow healed <> " de HP!"]
-                    saveBattleState newBs
-                    setSession keyPotions (tshow newPots)
-                    appendLogsToSession logs
-                    defaultLayout $ do
-                        setTitle "Combate"
-                        [whamlet|
-                            <div .hero>
-                                <h1>#{hdg}
-                                <p .subtitle>#{worldName cfg}
+                enemy   = buildEnemy cfg
+            renderCombat player cfg
+                ("⚔ Round " <> tshow (bsRound newBs))
+                (enemyName enemy) (bsEnemyHp newBs) (bsPlayerHp newBs)
+                potions logs True
 
-                            <div .section-box>
-                                <h2>#{enemyName enemy}
-                                <p>HP do inimigo: <strong>#{show (bsEnemyHp newBs)}
-                                <p>Seu HP: <strong>#{show (bsPlayerHp newBs)}
-
-                            <div .section-box>
-                                <h2>Poção usada!
-                                $forall entry <- logs
-                                    <p .log-entry>-> #{entry}
-
-                            <div .section-box>
-                                <h2>O que deseja fazer?
-                                <div style="display:flex; gap:12px; align-items:center;">
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="atacar">
-                                        <button .btn .btn-primary type=submit>⚔ Atacar
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="fugir">
-                                        <button .btn type=submit>🏃 Fugir
-
-                            <div .section-box>
-                                <h2>🎒 Inventário
-                                $if newPots > 0
-                                    <p>🧪 Poção Pequena (#{show newPots}) — recupera 15 HP
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="pocao">
-                                        <button .btn type=submit>🧪 Usar Poção
-                                $else
-                                    <p>Inventário vazio.
-                        |]
-
-        -- ── Fuga ─────────────────────────────────────────────────────────────
-        Just "fugir" -> do
-            mHpTxt <- lookupSession keyPlayerHp
+        Victory -> do
             clearBattleState
-            forM_ mHpTxt $ \hpTxt -> setSession keyPersistHp hpTxt
-            let logs = ["Jogador fugiu do combate.", "A sabedoria também é uma forma de sobreviver."]
-            appendLogsToSession logs
-            defaultLayout $ do
-                setTitle "Fugiu!"
-                [whamlet|
-                    <div .hero>
-                        <h1>🏃 Você fugiu!
-                        <p .subtitle>Às vezes recuar é a melhor estratégia.
+            setSession keyPersistHp (tshow (bsPlayerHp newBs))
+            renderResult cfg
+                "🏆"
+                ("Vitória! Round " <> tshow (bsRound newBs))
+                "Você derrotou o inimigo."
+                logs locVal locLabel
+                True (bsPlayerHp newBs) False False
 
-                    <div .section-box>
-                        $forall entry <- logs
-                            <p .log-entry>-> #{entry}
+        Defeat -> do
+            clearBattleState
+            setSession keyPersistHp (tshow (initialPlayerHp (playerClass player)))
+            renderResult cfg
+                "💀"
+                "Você foi derrotado..."
+                ("O round " <> tshow (bsRound newBs) <> " foi o seu último.")
+                logs locVal locLabel
+                False 0 True True
 
-                    <div .section-box>
-                        <div style="display:flex; gap:12px; align-items:center;">
-                            <form method=post action=@{ExploreR}>
-                                ^{tokenWidget}
-                                <input type=hidden name=destino value=#{locVal}>
-                                <button .btn .btn-primary type=submit>#{locLabel}
-                            <a .btn href=@{ExploreR}>Escolher outro local
-                        <p><a href=@{LogsR}>Ver log completo
-                |]
-
-        -- ── Atacar — roda um round de combate ─────────────────────────────────
-        _ -> do
-            bs         <- getBattleState player cfg
-            playerRoll <- liftIO $ randomRIO (0 :: Int, 99)
-            enemyRoll  <- liftIO $ randomRIO (0 :: Int, 99)
-            let (newBs, result, logs) = runRoundPure cfg player bs playerRoll enemyRoll
-            appendLogsToSession logs
-
-            case result of
-                -- Batalha continua
-                Ongoing -> do
-                    saveBattleState newBs
-                    mPotTxt <- lookupSession keyPotions
-                    let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
-                        enemy   = buildEnemy cfg
-                    defaultLayout $ do
-                        setTitle "Combate — Round em andamento"
-                        [whamlet|
-                            <div .hero>
-                                <h1>⚔ Round #{show (bsRound newBs)}
-                                <p .subtitle>#{worldName cfg}
-
-                            <div .section-box>
-                                <h2>#{enemyName enemy}
-                                <p>HP do inimigo: <strong>#{show (bsEnemyHp newBs)}
-                                <p>Seu HP: <strong>#{show (bsPlayerHp newBs)}
-
-                            <div .section-box>
-                                <h2>Log do round
-                                $forall entry <- logs
-                                    <p .log-entry>-> #{entry}
-
-                            <div .section-box>
-                                <h2>O que deseja fazer?
-                                <div style="display:flex; gap:12px; align-items:center;">
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="atacar">
-                                        <button .btn .btn-primary type=submit>⚔ Continuar atacando
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="fugir">
-                                        <button .btn type=submit>🏃 Fugir
-
-                            <div .section-box>
-                                <h2>🎒 Inventário
-                                $if potions > 0
-                                    <p>🧪 Poção Pequena (#{show potions}) — recupera 15 HP
-                                    <form method=post action=@{BattleR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=acao value="pocao">
-                                        <button .btn type=submit>🧪 Usar Poção
-                                $else
-                                    <p>Inventário vazio.
-                        |]
-
-                -- Vitória — preserva HP restante para a próxima batalha
-                Victory -> do
-                    clearBattleState
-                    setSession keyPersistHp (tshow (bsPlayerHp newBs))
-                    defaultLayout $ do
-                        setTitle "Vitória!"
-                        [whamlet|
-                            <div .hero>
-                                <h1>🏆 Vitória!
-                                <p .subtitle>Você derrotou o inimigo em #{show (bsRound newBs)} rounds.
-
-                            <div .section-box>
-                                <p>HP restante: <strong>#{show (bsPlayerHp newBs)}
-
-                            <div .section-box>
-                                <h2>Log do combate
-                                $forall entry <- logs
-                                    <p .log-entry>-> #{entry}
-
-                            <div .section-box>
-                                <div style="display:flex; gap:12px; align-items:center;">
-                                    <form method=post action=@{ExploreR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=destino value=#{locVal}>
-                                        <button .btn .btn-primary type=submit>#{locLabel}
-                                    <a .btn href=@{ExploreR}>Escolher outro local
-                                <p><a href=@{LogsR}>Ver log completo
-                        |]
-
-                -- Derrota — reseta HP para o valor inicial da classe
-                Defeat -> do
-                    clearBattleState
-                    setSession keyPersistHp (tshow (initialPlayerHp (playerClass player)))
-                    defaultLayout $ do
-                        setTitle "Você foi derrotado"
-                        [whamlet|
-                            <div .hero>
-                                <h1>💀 Você foi derrotado...
-                                <p .subtitle>O #{show (bsRound newBs)}º round foi o seu último.
-
-                            <div .section-box>
-                                <h2>Log do combate
-                                $forall entry <- logs
-                                    <p .log-entry>-> #{entry}
-
-                            <div .section-box>
-                                <div style="display:flex; gap:12px; align-items:center;">
-                                    <form method=post action=@{ExploreR}>
-                                        ^{tokenWidget}
-                                        <input type=hidden name=destino value=#{locVal}>
-                                        <button .btn .btn-primary type=submit>#{locLabel}
-                                    <a .btn href=@{ExploreR}>Escolher outro local
-                                <p><a href=@{BattleR}>Tentar novamente
-                                <p><a href=@{CharacterR}>Criar novo personagem
-                                <p><a href=@{LogsR}>Ver log completo
-                        |]
-
--- ── Helper: roda runGameM e extrai logs como lista pura ──────────────────────
---
--- Precisamos rodar o GameM (ReaderT + Writer) fora do Handler,
--- por isso extraímos tudo com runGameM aqui.
+-- ── Helper puro de round ──────────────────────────────────────────────────────
 
 runRoundPure :: GameConfig -> Player -> BattleState -> Int -> Int -> (BattleState, BattleResult, [Text])
 runRoundPure cfg player bs playerRoll enemyRoll =
     let ((newBs, result), logs) = runGameM cfg (runRound player bs playerRoll enemyRoll)
     in (newBs, result, logs)
 
--- ── Helpers de sessão e autenticação ─────────────────────────────────────────
+-- ── Auth helpers ──────────────────────────────────────────────────────────────
 
 withPlayerB :: (Player -> GameConfig -> Handler Html) -> Handler Html
 withPlayerB action = do

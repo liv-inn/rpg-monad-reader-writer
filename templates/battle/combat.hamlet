@@ -1,0 +1,58 @@
+$newline always
+
+<div #battleScene .battle-page .location-#{currentLocation}>
+    <div .battle-overlay>
+        <section .battle-shell>
+            <div .battle-panel>
+                <p .battle-kicker>
+                    Monad Quest
+
+                <h1 .battle-title>
+                    #{battleHeading}
+
+                <p .battle-subtitle>
+                    #{battleSubtitle}
+
+                <div .battle-combatants>
+                    <div .combatant .is-enemy>
+                        <p .combatant-label>Inimigo
+                        <p .combatant-name>#{enemyNameT}
+                        <p .combatant-hp>HP #{show enemyHpVal}
+
+                    <div .combatant-vs>
+                        ⚔
+
+                    <div .combatant .is-player>
+                        <p .combatant-label>Você
+                        <p .combatant-name>#{playerNameT}
+                        <p .combatant-hp>HP #{show playerHpVal}
+
+                $if not (null roundLogs)
+                    <div .battle-log>
+                        $forall entry <- roundLogs
+                            <p .battle-log-line>-> #{entry}
+
+                <div .battle-actions>
+                    <form method=post action=@{BattleR}>
+                        ^{tokenWidget}
+                        <input type=hidden name=acao value="atacar">
+                        <button .battle-button type=submit>
+                            #{attackLabel}
+
+                    <form method=post action=@{BattleR}>
+                        ^{tokenWidget}
+                        <input type=hidden name=acao value="fugir">
+                        <button .battle-button .is-flee type=submit>
+                            🏃 Fugir
+
+                $if potions > 0
+                    <div .battle-potion-row>
+                        <form method=post action=@{BattleR}>
+                            ^{tokenWidget}
+                            <input type=hidden name=acao value="pocao">
+                            <button .battle-button .is-potion type=submit>
+                                🧪 Usar Poção (#{show potions})
+
+                <div .battle-links>
+                    <a href=@{LogsR}>
+                        Ver log da aventura

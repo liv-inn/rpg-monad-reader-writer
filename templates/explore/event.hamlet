@@ -1,0 +1,46 @@
+$newline always
+
+<div #exploreScene .explore-page .location-#{currentLocation}>
+    <div .explore-overlay>
+        <section .explore-shell>
+            <div .explore-panel>
+                <p .explore-kicker>
+                    Monad Quest
+
+                <p .explore-event-icon>
+                    #{evIcon evt}
+
+                <h1 .explore-title>
+                    #{evTitle evt}
+
+                <p .explore-subtitle>
+                    #{localeName} — #{worldName cfg}
+
+                <div .explore-copy>
+                    <p>#{evBody evt}
+
+                <div .explore-log-entry>
+                    <p>-> #{evLog evt}
+
+                $maybe status <- mStatus
+                    <div .explore-status-banner>
+                        <p>#{status}
+
+                <div .explore-actions>
+                    <form method=post action=@{ExploreR}>
+                        ^{tokenWidget}
+                        <input type=hidden name=acao value="explorar_local">
+                        <button .explore-button type=submit>
+                            🔍 Explorar novamente
+
+                    <a .explore-button .is-alt href=@{BattleR}>
+                        ⚔ Encontrar inimigo
+
+                <div .explore-links>
+                    <form .explore-link-form method=post action=@{ExploreR}>
+                        ^{tokenWidget}
+                        <input type=hidden name=destino value="">
+                        <button .explore-link-btn type=submit>
+                            Voltar ao mapa
+                    <a href=@{LogsR}>
+                        Ver log completo

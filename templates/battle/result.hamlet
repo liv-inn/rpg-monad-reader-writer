@@ -1,0 +1,44 @@
+$newline always
+
+<div #battleScene .battle-page .location-#{currentLocation}>
+    <div .battle-overlay>
+        <section .battle-shell>
+            <div .battle-panel>
+                <p .battle-kicker>
+                    Monad Quest
+
+                <p .battle-result-icon>
+                    #{resultIcon}
+
+                <h1 .battle-title>
+                    #{resultHeading}
+
+                <p .battle-subtitle>
+                    #{resultSubtitle}
+
+                $if showHpRemaining
+                    <div .battle-hp-banner>
+                        <p>HP restante: <strong>#{show hpRemaining}
+
+                $if not (null resultLogs)
+                    <div .battle-log>
+                        $forall entry <- resultLogs
+                            <p .battle-log-line>-> #{entry}
+
+                <div .battle-actions>
+                    <form method=post action=@{ExploreR}>
+                        ^{tokenWidget}
+                        <input type=hidden name=destino value=#{locVal}>
+                        <button .battle-button type=submit>
+                            #{locLabel}
+
+                    <a .battle-button .is-flee href=@{ExploreR}>
+                        Escolher outro local
+
+                <div .battle-links>
+                    $if showRetry
+                        <a href=@{BattleR}>Tentar novamente
+                    $if showCreateChar
+                        <a href=@{CharacterR}>Novo personagem
+                    <a href=@{LogsR}>
+                        Ver log completo

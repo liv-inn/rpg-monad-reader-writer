@@ -17,3 +17,5 @@
         <a .btn .btn-secondary href=@{ExploreR}>Voltar para exploração
     <p>
         <a .btn .btn-secondary href=@{BattleR}>Ir para combate
+    <p>
+        <a .btn .btn-secondary href=@{HomeR}>Voltar à página inicial

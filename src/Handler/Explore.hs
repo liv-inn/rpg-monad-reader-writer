@@ -330,31 +330,14 @@ handleDestino player cfg mDestino = do
             deleteSession "player-location"
             redirect ExploreR
         else do
-            let (action, localeName) = case dest of
+            let (action, _) = case dest of
                     "caverna" -> (enterCave player,   "Caverna" :: Text)
                     _         -> (enterForest player, "Floresta" :: Text)
-                (description, logs) = runGameM cfg action
+                (_, logs) = runGameM cfg action
 
             setSession "player-location" dest
             appendLogsToSession logs
-
-            defaultLayout $ do
-                setTitle "Explorando"
-                [whamlet|
-                    <div .hero>
-                        <h1>Explorando a #{localeName}
-                        <p .subtitle>#{worldName cfg}
-
-                    <div .section-box>
-                        <p>#{description}
-
-                    <div .section-box>
-                        <h2>Log desta exploração
-                        $forall entry <- logs
-                            <p .log-entry>-> #{entry}
-
-                    ^{actionButtons}
-                |]
+            redirect ExploreR
 
 -- Explora o local atual — sorteia um evento aleatório
 handleExplorarLocal :: Player -> GameConfig -> Handler Html
@@ -412,38 +395,13 @@ handleExplorarLocal player cfg = do
 
 -- Renderiza a tela de evento normal/positivo/dreno
 renderNormalEvent :: GameConfig -> Text -> ExploreEvent -> Maybe Text -> Handler Html
-renderNormalEvent cfg localeName evt mStatus =
+renderNormalEvent cfg localeName evt mStatus = do
+    mLoc <- lookupSession "player-location"
+    let currentLocation :: Text
+        currentLocation = fromMaybe "floresta" mLoc
     defaultLayout $ do
         setTitle "Exploração — Evento"
-        [whamlet|
-            <div .hero>
-                <h1>#{evIcon evt} #{evTitle evt}
-                <p .subtitle>#{localeName} — #{worldName cfg}
-
-            <div .section-box>
-                <p>#{evBody evt}
-                <p .log-entry>-> #{evLog evt}
-
-            $maybe status <- mStatus
-                <div .section-box>
-                    <p>#{status}
-
-            ^{actionButtons}
-        |]
-
--- Botões de ação comuns (Encontrar inimigo + Explorar novamente)
-actionButtons :: Widget
-actionButtons = [whamlet|
-    <div .section-box>
-        <div style="display:flex; gap:12px; align-items:center;">
-            <a .btn .btn-primary href=@{BattleR}>⚔ Encontrar inimigo
-            <form method=post action=@{ExploreR}>
-                ^{tokenWidget}
-                <input type=hidden name=acao value="explorar_local">
-                <button .btn type=submit>🔍 Explorar
-        <p><a href=@{ExploreR}>Escolher outro local
-        <p><a href=@{LogsR}>Ver log completo
-|]
+        $(widgetFile "explore/event")
 
 -- Drena HP (mínimo 1) e retorna (hpAnterior, hpNovo)
 applyHpDrain :: Int -> Handler (Int, Int)
