@@ -1,7 +1,16 @@
-$newline always
-
 <div .character-page>
     <section .character-shell>
+        <div .page-glow aria-hidden="true">
+        <div .page-sparkles aria-hidden="true">
+            <span .spark .spark-sharp .ps1>
+            <span .spark .spark-soft .ps2>
+            <span .spark .spark-sharp .ps3>
+            <span .spark .spark-soft .ps4>
+            <span .spark .spark-sharp .ps5>
+            <span .spark .spark-soft .ps6>
+            <span .spark .spark-sharp .ps7>
+            <span .spark .spark-soft .ps8>
+
         <div .top-stage>
             <header .character-header>
                 <p .character-kicker>
@@ -13,6 +22,64 @@ $newline always
 
         <form #characterForm .character-form method=post action=@{CharacterR}>
             <input #selectedClass type=hidden name="class" value="">
+
+            <section .class-grid aria-label="Seleção de classe">
+                <button .class-card type=button data-class="warrior" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+
+                    <div .card-frame>
+                        <div .card-portrait>
+                            <img .class-image src=@{StaticR img_guerreira_png} alt="Retrato da Guerreira">
+
+                    <div .class-meta>
+                        <h2 .class-name>Guerreira
+                        <p .class-desc>
+                            Resiste ao colapso do reino com força, disciplina e presença em combate.
+
+                <button .class-card type=button data-class="mage" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+
+                    <div .card-frame>
+                        <div .card-portrait>
+                            <img .class-image src=@{StaticR img_maga_png} alt="Retrato da Maga">
+
+                    <div .class-meta>
+                        <h2 .class-name>Maga
+                        <p .class-desc>
+                            Manipula vínculos arcanos e percebe falhas que passam despercebidas aos demais.
+
+                <button .class-card type=button data-class="rogue" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+
+                    <div .card-frame>
+                        <div .card-portrait>
+                            <img .class-image src=@{StaticR img_ladina_png} alt="Retrato da Ladina">
+
+                    <div .class-meta>
+                        <h2 .class-name>Ladina
+                        <p .class-desc>
+                            Lê rastros, evita armadilhas e alcança caminhos que outros sequer notam.
 
             <section #creationPanel .creation-panel .is-hidden>
                 <div .creation-frame>
@@ -43,58 +110,3 @@ $newline always
                     <div .creation-actions>
                         <button .pixel-submit type=submit>
                             Begin Quest
-
-            <section .class-grid aria-label="Seleção de classe">
-                <button .class-card type=button data-class="warrior" aria-pressed="false">
-                    <span .card-glow aria-hidden="true">
-                    <span .card-sparkles aria-hidden="true">
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                    <div .class-card-inner>
-                        <div .class-avatar aria-hidden="true">
-                            <img .class-image src=@{StaticR img_guerreira_png} alt="">
-                        <div .class-copy>
-                            <h2 .class-name>
-                                Guerreira
-                            <p .class-desc>
-                                Resiste ao colapso do reino com força, disciplina e presença em combate.
-
-                <button .class-card type=button data-class="mage" aria-pressed="false">
-                    <span .card-glow aria-hidden="true">
-                    <span .card-sparkles aria-hidden="true">
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                    <div .class-card-inner>
-                        <div .class-avatar aria-hidden="true">
-                            <img .class-image src=@{StaticR img_maga_png} alt="">
-                        <div .class-copy>
-                            <h2 .class-name>
-                                Maga
-                            <p .class-desc>
-                                Manipula vínculos arcanos e percebe falhas que passam despercebidas aos demais.
-
-                <button .class-card type=button data-class="rogue" aria-pressed="false">
-                    <span .card-glow aria-hidden="true">
-                    <span .card-sparkles aria-hidden="true">
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                        <span .sparkle>
-                    <div .class-card-inner>
-                        <div .class-avatar aria-hidden="true">
-                            <img .class-image src=@{StaticR img_ladina_png} alt="">
-                        <div .class-copy>
-                            <h2 .class-name>
-                                Ladina
-                            <p .class-desc>
-                                Lê rastros, evita armadilhas e alcança caminhos que outros sequer notam.

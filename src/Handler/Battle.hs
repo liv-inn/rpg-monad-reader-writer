@@ -13,6 +13,7 @@ import Domain.World
 import Domain.Battle
 import Domain.SessionLog
 import System.Random (randomRIO)
+import Settings.StaticFiles
 
 -- ── Chaves de sessão ──────────────────────────────────────────────────────────
 
@@ -30,6 +31,35 @@ keyPersistHp = "player-hp"
 
 keyPotions :: Text
 keyPotions = "player-potions"
+
+-- ── Sprites ───────────────────────────────────────────────────────────────────
+
+playerWinSprite :: PlayerClass -> Route App
+playerWinSprite Warrior = StaticR img_battle_win_guerreira_win_png
+playerWinSprite Mage    = StaticR img_battle_win_maga_win_png
+playerWinSprite Rogue   = StaticR img_battle_win_ladina_win_png
+
+playerLoseSprite :: PlayerClass -> Route App
+playerLoseSprite Warrior = StaticR img_battle_lose_guerreira_lose_png
+playerLoseSprite Mage    = StaticR img_battle_lose_maga_lose_png
+playerLoseSprite Rogue   = StaticR img_battle_lose_ladina_lose_png
+
+playerCombatSprite :: PlayerClass -> Route App
+playerCombatSprite = playerWinSprite
+
+playerAltText :: PlayerClass -> Text
+playerAltText Warrior = "Sprite da Guerreira"
+playerAltText Mage    = "Sprite da Maga"
+playerAltText Rogue   = "Sprite da Ladina"
+
+goblinCombatSprite :: Route App
+goblinCombatSprite = StaticR img_battle_globin_globin_png
+
+goblinWinSprite :: Route App
+goblinWinSprite = StaticR img_battle_globin_globin_win_png
+
+goblinLoseSprite :: Route App
+goblinLoseSprite = StaticR img_battle_globin_globin_lose_png
 
 -- ── Estado da batalha ─────────────────────────────────────────────────────────
 
@@ -54,8 +84,8 @@ getBattleState player cfg = do
 saveBattleState :: BattleState -> Handler ()
 saveBattleState bs = do
     setSession keyPlayerHp (tshow (bsPlayerHp bs))
-    setSession keyEnemyHp  (tshow (bsEnemyHp  bs))
-    setSession keyRound    (tshow (bsRound     bs))
+    setSession keyEnemyHp  (tshow (bsEnemyHp bs))
+    setSession keyRound    (tshow (bsRound bs))
 
 clearBattleState :: Handler ()
 clearBattleState = do
@@ -70,21 +100,70 @@ renderCombat player cfg battleHeading enemyNameT enemyHpVal playerHpVal potions 
     mLoc <- lookupSession "player-location"
     let currentLocation :: Text
         currentLocation = fromMaybe "floresta" mLoc
+
         battleSubtitle :: Text
         battleSubtitle = worldName cfg <> " — " <> weather cfg
+
         playerNameT :: Text
         playerNameT = playerName player
+
         attackLabel :: Text
         attackLabel = if continuing then "⚔ Continuar atacando" else "⚔ Atacar"
+
+        playerImg :: Route App
+        playerImg = playerCombatSprite (playerClass player)
+
+        playerImgAlt :: Text
+        playerImgAlt = playerAltText (playerClass player)
+
+        enemyImg :: Route App
+        enemyImg = goblinCombatSprite
+
+        enemyImgAlt :: Text
+        enemyImgAlt = "Sprite do Globin"
+
     defaultLayout $ do
         setTitle "Combate"
         $(widgetFile "battle/combat")
 
-renderResult :: GameConfig -> Text -> Text -> Text -> [Text] -> Text -> Text -> Bool -> Int -> Bool -> Bool -> Handler Html
-renderResult cfg resultIcon resultHeading resultSubtitle resultLogs locVal locLabel showHpRemaining hpRemaining showRetry showCreateChar = do
+renderResult
+    :: Player
+    -> GameConfig
+    -> Text
+    -> Text
+    -> Text
+    -> [Text]
+    -> Text
+    -> Text
+    -> Bool
+    -> Int
+    -> Bool
+    -> Bool
+    -> Bool
+    -> Handler Html
+renderResult player cfg resultIcon resultHeading resultSubtitle resultLogs locVal locLabel showHpRemaining hpRemaining showRetry showCreateChar isVictory = do
     mLoc <- lookupSession "player-location"
     let currentLocation :: Text
         currentLocation = fromMaybe "floresta" mLoc
+
+        playerImg :: Route App
+        playerImg =
+            if isVictory
+                then playerWinSprite (playerClass player)
+                else playerLoseSprite (playerClass player)
+
+        playerImgAlt :: Text
+        playerImgAlt = playerAltText (playerClass player)
+
+        enemyImg :: Route App
+        enemyImg =
+            if isVictory
+                then goblinLoseSprite
+                else goblinWinSprite
+
+        enemyImgAlt :: Text
+        enemyImgAlt = "Sprite do Globin"
+
     defaultLayout $ do
         setTitle (toHtml resultHeading)
         $(widgetFile "battle/result")
@@ -94,9 +173,9 @@ renderResult cfg resultIcon resultHeading resultSubtitle resultLogs locVal locLa
 getBattleR :: Handler Html
 getBattleR = withPlayerB $ \player cfg -> do
     clearBattleState
-    bs      <- getBattleState player cfg
+    bs <- getBattleState player cfg
     mPotTxt <- lookupSession keyPotions
-    let enemy   = buildEnemy cfg
+    let enemy = buildEnemy cfg
         potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
     renderCombat player cfg
         "⚔ Combate"
@@ -107,17 +186,19 @@ getBattleR = withPlayerB $ \player cfg -> do
 
 postBattleR :: Handler Html
 postBattleR = withPlayerB $ \player cfg -> do
-    acao   <- runInputPost $ iopt textField "acao"
-    mLoc   <- lookupSession "player-location"
+    acao <- runInputPost $ iopt textField "acao"
+    mLoc <- lookupSession "player-location"
     let locVal :: Text
-        locVal   = fromMaybe "floresta" mLoc
+        locVal = fromMaybe "floresta" mLoc
+
         locLabel :: Text
         locLabel = case locVal of
-                       "caverna" -> "🕳 Continuar na Caverna"
-                       _         -> "🌲 Continuar na Floresta"
+            "caverna" -> "🕳 Continuar na Caverna"
+            _         -> "🌲 Continuar na Floresta"
+
     case acao of
         Just "pocao" -> handlePotion player cfg
-        Just "fugir" -> handleFlee   player cfg locVal locLabel
+        Just "fugir" -> handleFlee player cfg locVal locLabel
         _            -> handleAttack player cfg locVal locLabel
 
 -- ── Poção ─────────────────────────────────────────────────────────────────────
@@ -130,19 +211,22 @@ handlePotion player cfg = do
         then redirect ExploreR
         else do
             bs <- getBattleState player cfg
-            let maxHp   = initialPlayerHp (playerClass player)
-                healed  = min 15 (maxHp - bsPlayerHp bs)
-                newHp   = bsPlayerHp bs + healed
-                newBs   = bs { bsPlayerHp = newHp }
+            let maxHp = initialPlayerHp (playerClass player)
+                healed = min 15 (maxHp - bsPlayerHp bs)
+                newHp = bsPlayerHp bs + healed
+                newBs = bs { bsPlayerHp = newHp }
                 newPots = potions - 1
-                enemy   = buildEnemy cfg
+                enemy = buildEnemy cfg
                 hdg :: Text
-                hdg     = if bsRound newBs == 0
-                              then "⚔ Combate"
-                              else "⚔ Round " <> tshow (bsRound newBs)
-                logs    = ["🧪 " <> playerName player
-                            <> " usou uma Poção Pequena e recuperou "
-                            <> tshow healed <> " HP!"]
+                hdg =
+                    if bsRound newBs == 0
+                        then "⚔ Combate"
+                        else "⚔ Round " <> tshow (bsRound newBs)
+                logs =
+                    [ "🧪 " <> playerName player
+                        <> " usou uma Poção Pequena e recuperou "
+                        <> tshow healed <> " HP!"
+                    ]
             saveBattleState newBs
             setSession keyPotions (tshow newPots)
             appendLogsToSession logs
@@ -158,19 +242,21 @@ handleFlee player cfg locVal locLabel = do
     mHpTxt <- lookupSession keyPlayerHp
     clearBattleState
     forM_ mHpTxt $ \hpTxt -> setSession keyPersistHp hpTxt
-    let logs = [ "Jogador fugiu do combate."
-               , "A sabedoria também é uma forma de sobreviver." ]
+    let logs =
+            [ "Jogador fugiu do combate."
+            , "A sabedoria também é uma forma de sobreviver."
+            ]
     appendLogsToSession logs
-    renderResult cfg
+    renderResult player cfg
         "🏃" "Você fugiu!" "Às vezes recuar é a melhor estratégia."
         logs locVal locLabel
-        False 0 False False
+        False 0 False False False
 
 -- ── Atacar ────────────────────────────────────────────────────────────────────
 
 handleAttack :: Player -> GameConfig -> Text -> Text -> Handler Html
 handleAttack player cfg locVal locLabel = do
-    bs         <- getBattleState player cfg
+    bs <- getBattleState player cfg
     playerRoll <- liftIO $ randomRIO (0 :: Int, 99)
     enemyRoll  <- liftIO $ randomRIO (0 :: Int, 99)
     let (newBs, result, logs) = runRoundPure cfg player bs playerRoll enemyRoll
@@ -181,7 +267,7 @@ handleAttack player cfg locVal locLabel = do
             saveBattleState newBs
             mPotTxt <- lookupSession keyPotions
             let potions = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
-                enemy   = buildEnemy cfg
+                enemy = buildEnemy cfg
             renderCombat player cfg
                 ("⚔ Round " <> tshow (bsRound newBs))
                 (enemyName enemy) (bsEnemyHp newBs) (bsPlayerHp newBs)
@@ -190,22 +276,22 @@ handleAttack player cfg locVal locLabel = do
         Victory -> do
             clearBattleState
             setSession keyPersistHp (tshow (bsPlayerHp newBs))
-            renderResult cfg
+            renderResult player cfg
                 "🏆"
                 ("Vitória! Round " <> tshow (bsRound newBs))
                 "Você derrotou o inimigo."
                 logs locVal locLabel
-                True (bsPlayerHp newBs) False False
+                True (bsPlayerHp newBs) False False True
 
         Defeat -> do
             clearBattleState
             setSession keyPersistHp (tshow (initialPlayerHp (playerClass player)))
-            renderResult cfg
+            renderResult player cfg
                 "💀"
                 "Você foi derrotado..."
                 ("O round " <> tshow (bsRound newBs) <> " foi o seu último.")
                 logs locVal locLabel
-                False 0 True True
+                False 0 True True False
 
 -- ── Helper puro de round ──────────────────────────────────────────────────────
 
@@ -229,12 +315,14 @@ withPlayerB action = do
                 _ -> defaultLayout [whamlet|
                         <div .section-box>
                             <h1>Sessão inválida
-                            <p><a href=@{CharacterR}>Criar personagem
+                            <p>
+                                <a href=@{CharacterR}>Criar personagem
                     |]
         _ -> defaultLayout [whamlet|
                 <div .section-box>
                     <h1>Nenhum personagem encontrado
-                    <p><a href=@{CharacterR}>Criar personagem
+                    <p>
+                        <a href=@{CharacterR}>Criar personagem
             |]
 
 tokenWidget :: Widget

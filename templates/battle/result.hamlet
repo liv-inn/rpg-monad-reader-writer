@@ -1,5 +1,3 @@
-$newline always
-
 <div #battleScene .battle-page .location-#{currentLocation}>
     <div .battle-overlay>
         <section .battle-shell>
@@ -9,6 +7,12 @@ $newline always
 
                 <p .battle-result-icon>
                     #{resultIcon}
+
+                <div .battle-result-duo>
+                    <div .battle-result-side>
+                        <img .battle-result-sprite .enemy-sprite src=@{enemyImg} alt=#{enemyImgAlt}>
+                    <div .battle-result-side>
+                        <img .battle-result-sprite src=@{playerImg} alt=#{playerImgAlt}>
 
                 <h1 .battle-title>
                     #{resultHeading}
@@ -40,7 +44,5 @@ $newline always
                         <a href=@{BattleR}>Tentar novamente
                     $if showCreateChar
                         <a href=@{CharacterR}>Novo personagem
-                    <a href=@{LogsR}>
-                        Ver log da aventura
-                    <a href=@{HomeR}>
-                        Voltar à página inicial
+                    <a href=@{LogsR}>Ver log da aventura
+                    <a href=@{HomeR}>Voltar à página inicial

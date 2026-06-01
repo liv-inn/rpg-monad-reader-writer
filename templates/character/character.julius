@@ -26,7 +26,11 @@
 
         feedback.textContent = "Classe selecionada: " + (labels[className] || "—");
         panel.classList.remove("is-hidden");
-        nameInput.focus();
+
+        window.requestAnimationFrame(function () {
+            panel.scrollIntoView({ behavior: "smooth", block: "start" });
+            nameInput.focus();
+        });
     };
 
     cards.forEach(function (card) {

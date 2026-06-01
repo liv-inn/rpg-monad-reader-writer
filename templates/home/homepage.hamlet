@@ -1,43 +1,33 @@
-$newline always
-
 <div .landing-page>
-    <section .hero-section>
-        <div .hero-overlay>
-        <div .hero-content .container>
-            <div .hero-copy .hero-centered>
-                <p .eyebrow>
-                    Projeto acadêmico em Haskell e Yesod
-                <h1>
-                    Monad Quest
-                <p .hero-subtitle>
-                    Uma exploração interativa das mônadas <code>Reader</code> e <code>Writer</code> em Haskell.
-                <p .hero-text>
-                    Esta aplicação apresenta uma abordagem didática para a compreensão de abstrações monádicas por meio de uma experiência interativa ambientada em um universo medieval de fantasia. O objetivo consiste em demonstrar, de forma operacional e visual, como a mônada <code>Reader</code> estrutura a passagem de ambiente e como a mônada <code>Writer</code> viabiliza a acumulação composicional de eventos observáveis.
-                <div .hero-actions>
-                    <a .cta-primary href=@{StoryR}>
-                        Iniciar aventura
-                    <a .cta-secondary href="#about">
-                        Ver apresentação
+    <section .hero-shell>
+        <div .hero-glow>
+        <div .hero-panel>
+            <div .hero-bg>
+            <div .hero-fade>
+            <div .hero-noise>
+            <div .hero-particles aria-hidden="true">
+                <span .spark .spark-sharp .s1>
+                <span .spark .spark-soft .s2>
+                <span .spark .spark-sharp .s3>
+                <span .spark .spark-soft .s4>
+                <span .spark .spark-sharp .s5>
+                <span .spark .spark-soft .s6>
+                <span .spark .spark-sharp .s7>
+                <span .spark .spark-soft .s8>
+                <span .spark .spark-sharp .s9>
+                <span .spark .spark-soft .s10>
+                <span .spark .spark-sharp .s11>
+                <span .spark .spark-soft .s12>
 
-    <section #about .presentation-wrapper>
-        <div .story-banner>
-            <div .story-banner-overlay>
-            <div .container .story-banner-content>
-                <p .section-kicker>
-                    Apresentação
-                <h2>
-                    Da teoria à experiência interativa
-                <p>
-                    A proposta articula fundamentação conceitual, modelagem funcional e ambientação visual para introduzir de forma progressiva as mônadas <code>Reader</code> e <code>Writer</code> no ecossistema Haskell.
-
-        <div .container>
-            <div .presentation-panel>
-                <p>
-                    Em <strong>Monad Quest</strong>, a ambientação medieval em floresta fantástica funciona como mediação visual para a exposição de conceitos formais da programação funcional. A jornada do jogador materializa o uso de estruturas monádicas que, em um tratamento puramente teórico, poderiam parecer excessivamente abstratas em um primeiro contato.
-                <p>
-                    A mônada <code>Reader</code> é empregada para representar computações dependentes de um ambiente compartilhado, permitindo que parâmetros de execução sejam consultados sem passagem manual repetitiva. Já a mônada <code>Writer</code> torna possível acumular descrições e eventos observáveis ao longo da computação de maneira composicional.
-                <p>
-                    Desse modo, a página inicial introduz os fundamentos da proposta, enquanto a aventura conduz o observador à dimensão operacional do projeto, evidenciando como abstrações monádicas podem estruturar contexto e rastreabilidade em aplicações funcionais.
-                <div .presentation-actions>
-                    <a .cta-primary href=@{StoryR}>
-                        Prosseguir para a aventura
+            <div .hero-content>
+                <div .hero-copy .hero-centered>
+                    <p .eyebrow>
+                        Jogo acadêmico em Haskell e Yesod
+                    <h1>Monad Quest
+                    <p .hero-subtitle>
+                        Uma jornada arcana por <code>Reader</code> e <code>Writer</code>.
+                    <p .hero-text>
+                        Explore um universo fantástico construído para apresentar conceitos de programação funcional por meio de escolhas, contexto e rastreamento de eventos.
+                    <div .hero-actions>
+                        <a .cta-primary href=@{StoryR}>
+                            Iniciar aventura

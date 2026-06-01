@@ -23,7 +23,6 @@ import Import
     , areq
     , generateFormPost
     , renderDivs
-    , runFormPost
     , Html
     , PathPiece(toPathPiece)
     , PersistStoreWrite(insert)
@@ -39,14 +38,17 @@ import Import
                gameSaveWeather)
     , Widget
     , Handler
-    , redirect,
-    runInputPost,
-      ireq,
+    , redirect
+    , runInputPost
+    , ireq
+    , toWidgetHead
+    , addStylesheetRemote
     )
 import Domain.Player
 import Domain.World
-    ( GameConfig(enemyMultiplier, worldName, weather),
-      gameConfigFromPlayer )
+    ( GameConfig(enemyMultiplier, worldName, weather)
+    , gameConfigFromPlayer
+    )
 import Domain.Battle (initialPlayerHp)
 import Domain.SessionLog
 import Settings.StaticFiles
@@ -55,6 +57,8 @@ getCharacterR :: Handler Html
 getCharacterR = do
     (formWidget, formEnctype) <- generateFormPost characterForm
     defaultLayout $ do
+        
+        addStylesheetRemote "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=VT323&display=swap"
         setTitle "Monad Quest | Character Creation"
         $(widgetFile "character/character")
 

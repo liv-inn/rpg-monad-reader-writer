@@ -1,7 +1,18 @@
-$newline always
-
 <div #storyScene .story-page>
     <section .story-shell>
+        <div .story-glow aria-hidden="true">
+        <div .story-sparkles aria-hidden="true">
+            <span .spark .spark-sharp .sp1>
+            <span .spark .spark-soft .sp2>
+            <span .spark .spark-sharp .sp3>
+            <span .spark .spark-soft .sp4>
+            <span .spark .spark-sharp .sp5>
+            <span .spark .spark-soft .sp6>
+            <span .spark .spark-sharp .sp7>
+            <span .spark .spark-soft .sp8>
+            <span .spark .spark-sharp .sp9>
+            <span .spark .spark-soft .sp10>
+
         <button #bookToggle .book-trigger type="button" aria-label="Abrir as crônicas de Monad Quest" aria-expanded="false">
             <div .book-layer>
                 <img .story-book src=@{StaticR img_book_cover_png} alt="Livro de Monad Quest">
@@ -12,9 +23,6 @@ $newline always
 
         <section #lorePanel .lore-panel .is-hidden aria-live="polite">
             <div .pixel-frame>
-                <div .pixel-corner .corner-left aria-hidden="true">
-                <div .pixel-corner .corner-right aria-hidden="true">
-
                 <p .panel-kicker>
                     Arcane Chronicle
                 <h1 .panel-title>

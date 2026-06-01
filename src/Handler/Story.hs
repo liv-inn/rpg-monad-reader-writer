@@ -11,6 +11,8 @@ import Settings.StaticFiles
 
 getStoryR :: Handler Html
 getStoryR = defaultLayout $ do
-    addStylesheetRemote "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&display=swap"
+    let agedPaperBg = StaticR img_aged_paper_png
+   
+    addStylesheetRemote "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=VT323&display=swap"
     setTitle "O Reino de Lambda"
     $(widgetFile "story/story")

@@ -1,5 +1,3 @@
-$newline always
-
 <div #battleScene .battle-page .location-#{currentLocation}>
     <div .battle-overlay>
         <section .battle-shell>
@@ -15,6 +13,8 @@ $newline always
 
                 <div .battle-combatants>
                     <div .combatant .is-enemy>
+                        <div .combatant-sprite-wrap>
+                            <img .combatant-sprite .enemy-sprite src=@{enemyImg} alt=#{enemyImgAlt}>
                         <p .combatant-label>Inimigo
                         <p .combatant-name>#{enemyNameT}
                         <p .combatant-hp>HP #{show enemyHpVal}
@@ -23,6 +23,8 @@ $newline always
                         ⚔
 
                     <div .combatant .is-player>
+                        <div .combatant-sprite-wrap>
+                            <img .combatant-sprite src=@{playerImg} alt=#{playerImgAlt}>
                         <p .combatant-label>Você
                         <p .combatant-name>#{playerNameT}
                         <p .combatant-hp>HP #{show playerHpVal}
@@ -54,7 +56,5 @@ $newline always
                                 🧪 Usar Poção (#{show potions})
 
                 <div .battle-links>
-                    <a href=@{LogsR}>
-                        Ver log da aventura
-                    <a href=@{HomeR}>
-                        Voltar à página inicial
+                    <a href=@{LogsR}>Ver log da aventura
+                    <a href=@{HomeR}>Voltar à página inicial
