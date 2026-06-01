@@ -1,0 +1,8 @@
+(function () {
+    const scene = document.getElementById("exploreScene");
+    if (!scene) {
+        return;
+    }
+
+    console.log("Explore scene classes:", scene.className);
+})();

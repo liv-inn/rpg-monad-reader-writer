@@ -1,0 +1,94 @@
+$newline always
+
+$if currentLocation == "world"
+    <div #exploreScene .explore-page .sky-#{skyClass}>
+        <div .explore-overlay>
+            <section .explore-shell>
+                <div .explore-panel>
+                    <p .explore-kicker>
+                        Monad Quest
+
+                    <h1 .explore-title>
+                        #{sceneTitle}
+
+                    <p .explore-subtitle>
+                        #{sceneSubtitle}
+
+                    <div .explore-status>
+                        <span .status-chip>
+                            Mundo: #{worldName cfg}
+                        <span .status-chip>
+                            Céu: #{weather cfg}
+                        <span .status-chip>
+                            Classe: #{classLabel}
+                        <span .status-chip>
+                            Dificuldade: #{difficultyLabel}
+
+                    <div .explore-copy>
+                        <p>
+                            O horizonte do Reino de Lambda se abre diante de você. Sob este céu, cada escolha altera o peso da travessia.
+
+                    <div .explore-actions>
+                        <form method=post action=@{ExploreR}>
+                            ^{tokenWidget}
+                            <input type=hidden name=destino value="floresta">
+                            <button .explore-button type=submit>
+                                Entrar na floresta
+
+                        <form method=post action=@{ExploreR}>
+                            ^{tokenWidget}
+                            <input type=hidden name=destino value="caverna">
+                            <button .explore-button .is-alt type=submit>
+                                Entrar na caverna
+
+                    <div .explore-links>
+                        <a href=@{LogsR}>
+                            Ver log da aventura
+$else
+    <div #exploreScene .explore-page .location-#{currentLocation}>
+        <div .explore-overlay>
+            <section .explore-shell>
+                <div .explore-panel>
+                    <p .explore-kicker>
+                        Monad Quest
+
+                    <h1 .explore-title>
+                        #{sceneTitle}
+
+                    <p .explore-subtitle>
+                        #{sceneSubtitle}
+
+                    <div .explore-status>
+                        <span .status-chip>
+                            Mundo: #{worldName cfg}
+                        <span .status-chip>
+                            Céu: #{weather cfg}
+                        <span .status-chip>
+                            Classe: #{classLabel}
+                        <span .status-chip>
+                            Dificuldade: #{difficultyLabel}
+
+                    <div .explore-copy>
+                        $if currentLocation == "floresta"
+                            <p>
+                                A névoa paira entre troncos antigos, e cada passo parece acordar vínculos adormecidos.
+                        $elseif currentLocation == "caverna"
+                            <p>
+                                O ar é frio, mineral, e o eco da rocha parece conhecer segredos que não pertencem aos vivos.
+
+                    <div .explore-actions>
+                        <form method=post action=@{ExploreR}>
+                            ^{tokenWidget}
+                            <input type=hidden name=acao value="explorar_local">
+                            <button .explore-button type=submit>
+                                Explorar #{currentLocation}
+
+                        <form method=post action=@{ExploreR}>
+                            ^{tokenWidget}
+                            <input type=hidden name=destino value="">
+                            <button .explore-button .is-alt type=submit>
+                                Voltar ao mapa
+
+                    <div .explore-links>
+                        <a href=@{LogsR}>
+                            Ver log da aventura

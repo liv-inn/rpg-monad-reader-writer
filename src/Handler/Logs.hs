@@ -13,4 +13,4 @@ getLogsR :: Handler Html
 getLogsR = do
     logs <- readLogsFromSession
     defaultLayout $ do
-        $(widgetFile "logs")
+        $(widgetFile "logs/logs")

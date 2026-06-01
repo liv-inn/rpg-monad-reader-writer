@@ -1,0 +1,281 @@
+:root {
+    --bg-main: #08110d;
+    --bg-deep: #0d1712;
+    --text-main: #f1ead7;
+    --text-soft: #d3c7a6;
+    --text-dark: #2e2418;
+    --accent-gold: #d5b46a;
+    --accent-gold-strong: #f0cd87;
+    --accent-red: #7d2f34;
+    --border-dark: #2b4036;
+    --border-gold: #a7864e;
+    --shadow: rgba(0, 0, 0, 0.42);
+    --pixel-font: "Pixelify Sans", sans-serif;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(180deg, #0b120e 0%, #08100c 100%);
+    color: var(--text-main);
+    font-family: "Georgia", "Times New Roman", serif;
+}
+
+.landing-page {
+    min-height: 100vh;
+}
+
+.container {
+    width: 88%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+    background:
+        linear-gradient(rgba(8, 12, 10, 0.52), rgba(8, 12, 10, 0.74)),
+        url(@{heroBg});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(3, 5, 4, 0.20) 0%, rgba(3, 5, 4, 0.48) 100%);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-copy {
+    max-width: 860px;
+}
+
+.hero-centered {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.eyebrow,
+.section-kicker,
+.hero-copy h1,
+.story-banner h2,
+.cta-primary,
+.cta-secondary {
+    font-family: var(--pixel-font);
+}
+
+.eyebrow,
+.section-kicker {
+    margin: 0 0 18px;
+    color: var(--accent-gold-strong);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.9rem;
+}
+
+.hero-copy h1 {
+    margin: 0 0 20px;
+    font-size: 4.2rem;
+    line-height: 1.05;
+    color: #f7e8be;
+    text-shadow:
+        2px 0 0 #3b2b15,
+        -2px 0 0 #3b2b15,
+        0 2px 0 #3b2b15,
+        0 -2px 0 #3b2b15,
+        4px 4px 0 rgba(0, 0, 0, 0.35);
+}
+
+.hero-subtitle {
+    margin: 0 auto 18px;
+    max-width: 44rem;
+    font-size: 1.3rem;
+    color: var(--text-soft);
+}
+
+.hero-text {
+    margin: 0 auto;
+    max-width: 72ch;
+    line-height: 1.9;
+    font-size: 1.03rem;
+    color: #f4eedf;
+}
+
+.hero-actions,
+.presentation-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+}
+
+.cta-primary,
+.cta-secondary {
+    display: inline-block;
+    padding: 14px 22px 12px;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 0.98rem;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    border: 4px solid #1d130d;
+    border-radius: 0;
+    box-shadow:
+        0 4px 0 #1d130d,
+        4px 0 0 #1d130d,
+        4px 4px 0 #1d130d;
+    transition:
+        transform 0.08s ease,
+        box-shadow 0.08s ease,
+        background 0.15s ease;
+}
+
+.cta-primary {
+    background: #b14a4f;
+    color: #fff4df;
+    text-shadow: 1px 1px 0 #5c1f24;
+}
+
+.cta-primary:hover {
+    background: #c65a60;
+    transform: translate(2px, 2px);
+    box-shadow:
+        0 2px 0 #1d130d,
+        2px 0 0 #1d130d,
+        2px 2px 0 #1d130d;
+}
+
+.cta-secondary {
+    background: #e1c07c;
+    color: #2e2418;
+}
+
+.cta-secondary:hover {
+    background: #f0cd87;
+    transform: translate(2px, 2px);
+    box-shadow:
+        0 2px 0 #1d130d,
+        2px 0 0 #1d130d,
+        2px 2px 0 #1d130d;
+}
+
+.presentation-wrapper {
+    background: linear-gradient(180deg, #0d1712 0%, #101c16 100%);
+    padding-bottom: 80px;
+}
+
+.is-hidden {
+    display: none;
+}
+
+.story-banner {
+    position: relative;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    background:
+        linear-gradient(rgba(9, 12, 10, 0.52), rgba(9, 12, 10, 0.72)),
+        url(@{storyBg});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-top: 4px solid var(--border-dark);
+    border-bottom: 4px solid var(--border-dark);
+}
+
+.story-banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(4, 7, 6, 0.72) 0%, rgba(7, 12, 9, 0.28) 50%, rgba(4, 7, 6, 0.72) 100%);
+}
+
+.story-banner-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 60px 0;
+}
+
+.story-banner h2 {
+    margin: 0 0 18px;
+    font-size: 2.4rem;
+    color: #f2dfa8;
+}
+
+.story-banner p {
+    margin: 0 auto;
+    max-width: 60ch;
+    line-height: 1.8;
+    color: #f3ebd9;
+}
+
+.presentation-panel {
+    max-width: 900px;
+    margin: 40px auto 0;
+    padding: 34px;
+    background:
+        linear-gradient(rgba(243, 233, 210, 0.34), rgba(228, 214, 182, 0.4)),
+        url(@{parchmentBg});
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--text-dark);
+    border: none;
+    box-shadow: 0 12px 30px var(--shadow);
+}
+
+.presentation-panel p {
+    margin-top: 0;
+    margin-bottom: 18px;
+    line-height: 1.9;
+}
+
+.presentation-panel code {
+    color: #5d2f1f;
+    background: rgba(126, 84, 28, 0.10);
+    border: 1px solid rgba(126, 84, 28, 0.18);
+    padding: 2px 6px;
+}
+
+@media only screen and (max-width: 800px) {
+    .hero-copy h1 {
+        font-size: 3rem;
+    }
+
+    .story-banner h2 {
+        font-size: 1.8rem;
+    }
+
+    .presentation-panel {
+        padding: 24px;
+    }
+}
+
+@media only screen and (max-width: 560px) {
+    .hero-copy h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.05rem;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}

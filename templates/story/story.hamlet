@@ -1,0 +1,32 @@
+$newline always
+
+<div #storyScene .story-page>
+    <section .story-shell>
+        <button #bookToggle .book-trigger type="button" aria-label="Abrir as crônicas de Monad Quest" aria-expanded="false">
+            <div .book-layer>
+                <img .story-book src=@{StaticR img_book_cover_png} alt="Livro de Monad Quest">
+                <p .story-call>
+                    Clique no livro para revelar as crônicas.
+                <p .story-subcall>
+                    O reino registra tudo. Nada escapa aos vínculos.
+
+        <section #lorePanel .lore-panel .is-hidden aria-live="polite">
+            <div .pixel-frame>
+                <div .pixel-corner .corner-left aria-hidden="true">
+                <div .pixel-corner .corner-right aria-hidden="true">
+
+                <p .panel-kicker>
+                    Arcane Chronicle
+                <h1 .panel-title>
+                    Monad Quest
+                <p .panel-lead>
+                    O Reino de Lambda está se partindo. Vínculos antigos falham, memórias desaparecem e algo oculto força o mundo a esquecer sua própria forma.
+                <p .panel-text>
+                    Nada existe isoladamente neste reino. Toda criatura, trilha, relíquia e feitiço depende de conexões invisíveis para permanecer íntegro.
+                <p .panel-text>
+                    Agora, esses laços começam a ruir. O fenômeno se espalha em silêncio, cidade após cidade, tomo após tomo, até mesmo entre os nomes que antes pareciam eternos.
+                <p .panel-text>
+                    Alguns o chamam de Desligamento. Outros preferem não dar nome ao que pode desfazer o próprio mundo.
+                <div .panel-actions>
+                    <a .pixel-button href=@{CharacterR}>
+                        Start Quest

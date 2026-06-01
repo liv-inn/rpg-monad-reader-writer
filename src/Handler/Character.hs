@@ -8,89 +8,95 @@
 module Handler.Character where
 
 import Import
+    ( ($)
+    , Show(show)
+    , Applicative((<*>))
+    , Maybe(Nothing, Just)
+    , (<$>)
+    , tshow
+    , setSession
+    , setTitle
+    , whamlet
+    , selectFieldList
+    , textField
+    , areq
+    , generateFormPost
+    , renderDivs
+    , runFormPost
+    , Html
+    , PathPiece(toPathPiece)
+    , PersistStoreWrite(insert)
+    , Text
+    , Yesod(defaultLayout)
+    , Route(StaticR, ExploreR, CharacterR)
+    , FormResult(FormSuccess)
+    , MForm
+    , YesodPersist(runDB)
+    , widgetFile
+    , GameSave(GameSave, gameSaveEnemyMultiplier, gameSavePlayerName,
+               gameSavePlayerClass, gameSaveDifficulty, gameSaveWorldName,
+               gameSaveWeather)
+    , Widget
+    , Handler
+    , redirect,
+    runInputPost,
+      ireq,
+    )
 import Domain.Player
 import Domain.World
+    ( GameConfig(enemyMultiplier, worldName, weather),
+      gameConfigFromPlayer )
 import Domain.Battle (initialPlayerHp)
 import Domain.SessionLog
+import Settings.StaticFiles
 
 getCharacterR :: Handler Html
 getCharacterR = do
     (formWidget, formEnctype) <- generateFormPost characterForm
     defaultLayout $ do
-        setTitle "Criacao de Personagem"
-        $(widgetFile "character")
+        setTitle "Monad Quest | Character Creation"
+        $(widgetFile "character/character")
 
 postCharacterR :: Handler Html
 postCharacterR = do
-    ((result, formWidget), formEnctype) <- runFormPost characterForm
-    case result of
-        FormSuccess (nome, clsTxt, diffTxt) ->
-            case (parsePlayerClass clsTxt, parseDifficulty diffTxt) of
-                (Just cls, Just diff) -> do
-                    let player = Player nome cls diff
-                        cfg = gameConfigFromPlayer player
+    nome    <- runInputPost $ ireq textField "name"
+    clsTxt  <- runInputPost $ ireq textField "class"
+    diffTxt <- runInputPost $ ireq textField "difficulty"
 
-                    gameSaveId <- runDB $ insert GameSave
-                        { gameSavePlayerName = playerName player
-                        , gameSavePlayerClass = prettyPlayerClass (playerClass player)
-                        , gameSaveDifficulty = prettyDifficulty (playerDifficulty player)
-                        , gameSaveWorldName = worldName cfg
-                        , gameSaveWeather = weather cfg
-                        , gameSaveEnemyMultiplier = enemyMultiplier cfg
-                        }
+    case (parsePlayerClass clsTxt, parseDifficulty diffTxt) of
+        (Just cls, Just diff) -> do
+            let player = Player nome cls diff
+                cfg = gameConfigFromPlayer player
 
-                    setSession "player-name" nome
-                    setSession "player-class" clsTxt
-                    setSession "player-difficulty" diffTxt
-                    setSession "game-save-id" (toPathPiece gameSaveId)
-                    setSession "player-hp" (tshow (initialPlayerHp cls))
-                    setSession "player-potions" "1"
-                    clearLogsFromSession
+            gameSaveId <- runDB $ insert GameSave
+                { gameSavePlayerName = playerName player
+                , gameSavePlayerClass = prettyPlayerClass (playerClass player)
+                , gameSaveDifficulty = prettyDifficulty (playerDifficulty player)
+                , gameSaveWorldName = worldName cfg
+                , gameSaveWeather = weather cfg
+                , gameSaveEnemyMultiplier = enemyMultiplier cfg
+                }
 
-                    defaultLayout $ do
-                        setTitle "Personagem Criado"
-                        [whamlet|
-                            <div .hero>
-                                <h1>Personagem criado com sucesso
-                                <p .subtitle>
-                                    Sua aventura em Monad Quest está pronta para começar.
+            setSession "player-name" nome
+            setSession "player-class" clsTxt
+            setSession "player-difficulty" diffTxt
+            setSession "game-save-id" (toPathPiece gameSaveId)
+            setSession "player-hp" (tshow (initialPlayerHp cls))
+            setSession "player-potions" "1"
+            clearLogsFromSession
 
-                            <div .section-box>
-                                <h2>Resumo do personagem
-                                <p>
-                                    <strong>Nome:</strong> #{playerName player}
-                                <p>
-                                    <strong>Classe:</strong> #{prettyPlayerClass (playerClass player)}
-                                <p>
-                                    <strong>Dificuldade:</strong> #{prettyDifficulty (playerDifficulty player)}
+            redirect ExploreR
 
-                            <div .section-box>
-                                <h2>Configuração inicial do mundo
-                                <p>
-                                    <strong>Mundo:</strong> #{worldName cfg}
-                                <p>
-                                    <strong>Clima:</strong> #{weather cfg}
-                                <p>
-                                    <strong>Multiplicador de inimigos:</strong> #{show (enemyMultiplier cfg)}
-
-                            <div .section-box>
-                                <p>
-                                    <a .btn .btn-primary href=@{ExploreR}>Iniciar exploração
-                        |]
-                _ ->
-                    defaultLayout $ do
-                        setTitle "Erro na criacao do personagem"
-                        [whamlet|
-                            <div .section-box>
-                                <h1>Classe ou dificuldade invalida
-                                <p>
-                                    Os dados enviados pelo formulario nao puderam ser interpretados.
-                                <p>
-                                    <a .btn .btn-primary href=@{CharacterR}>Voltar para criacao de personagem
-                        |]
-        _ -> defaultLayout $ do
-            setTitle "Criacao de Personagem"
-            $(widgetFile "character")
+        _ ->
+            defaultLayout $ do
+                setTitle "Erro na criacao do personagem"
+                [whamlet|
+                    <div .section-box>
+                        <h1>Classe ou dificuldade invalida
+                        <p>Os dados enviados pelo formulario nao puderam ser interpretados.
+                        <p>
+                            <a .btn .btn-primary href=@{CharacterR}>Voltar para criacao de personagem
+                |]
 
 characterForm :: Html -> MForm Handler (FormResult (Text, Text, Text), Widget)
 characterForm = renderDivs $ (,,)

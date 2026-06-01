@@ -1,0 +1,44 @@
+(function () {
+    const cards = Array.from(document.querySelectorAll(".class-card"));
+    const hiddenInput = document.getElementById("selectedClass");
+    const panel = document.getElementById("creationPanel");
+    const feedback = document.getElementById("classFeedback");
+    const nameInput = document.getElementById("playerName");
+
+    if (!cards.length || !hiddenInput || !panel || !feedback || !nameInput) {
+        return;
+    }
+
+    const labels = {
+        warrior: "Guerreira",
+        mage: "Maga",
+        rogue: "Ladina"
+    };
+
+    const selectClass = function (className) {
+        hiddenInput.value = className;
+
+        cards.forEach(function (card) {
+            const isSelected = card.dataset.class === className;
+            card.classList.toggle("is-selected", isSelected);
+            card.setAttribute("aria-pressed", isSelected ? "true" : "false");
+        });
+
+        feedback.textContent = "Classe selecionada: " + (labels[className] || "—");
+        panel.classList.remove("is-hidden");
+        nameInput.focus();
+    };
+
+    cards.forEach(function (card) {
+        card.addEventListener("click", function () {
+            selectClass(card.dataset.class);
+        });
+
+        card.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                selectClass(card.dataset.class);
+            }
+        });
+    });
+})();

@@ -1,0 +1,43 @@
+(function () {
+    const scene = document.getElementById("storyScene");
+    const book = document.getElementById("bookToggle");
+    const panel = document.getElementById("lorePanel");
+    const shell = document.querySelector(".story-shell");
+
+    if (!scene || !book || !panel || !shell) {
+        return;
+    }
+
+    const syncHeight = function () {
+        if (window.innerWidth <= 720) {
+            shell.style.minHeight = "";
+            return;
+        }
+
+        const rect = book.getBoundingClientRect();
+        if (rect.height > 0) {
+            shell.style.minHeight = rect.height + "px";
+        }
+    };
+
+    const revealPanel = function () {
+        syncHeight();
+        scene.classList.add("is-revealed");
+        panel.classList.remove("is-hidden");
+        book.setAttribute("aria-expanded", "true");
+    };
+
+    window.addEventListener("load", syncHeight);
+    window.addEventListener("resize", syncHeight);
+
+    book.addEventListener("click", function () {
+        revealPanel();
+    });
+
+    book.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            revealPanel();
+        }
+    });
+})();

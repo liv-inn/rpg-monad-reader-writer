@@ -263,33 +263,51 @@ errInvalidSession = defaultLayout [whamlet|
 
 getExploreR :: Handler Html
 getExploreR = withPlayer $ \player cfg -> do
+    mLoc <- lookupSession "player-location"
+
+    let currentLocation :: Text
+        currentLocation = case mLoc of
+            Just "floresta" -> "floresta"
+            Just "caverna"  -> "caverna"
+            _               -> "world"
+
+        skyClass :: Text
+        skyClass = case weather cfg of
+            "sunny"  -> "sunny"
+            "cloudy" -> "cloudy"
+            "storm"  -> "storm"
+            _        -> "cloudy"
+
+        sceneTitle :: Text
+        sceneTitle = case currentLocation of
+            "floresta" -> "Floresta dos Vínculos"
+            "caverna"  -> "Caverna do Eco Partido"
+            _          -> "Explore o mundo"
+
+        sceneSubtitle :: Text
+        sceneSubtitle = case currentLocation of
+            "floresta" ->
+                "As árvores sussurram nomes esquecidos pelo Reino de Lambda."
+            "caverna"  ->
+                "A pedra devolve respostas que jamais foram perguntadas."
+            _          ->
+                "Escolha o próximo caminho sob o céu que rege esta jornada."
+
+        classLabel :: Text
+        classLabel = case playerClass player of
+            Warrior -> "Guerreira"
+            Mage    -> "Maga"
+            Rogue   -> "Ladina"
+
+        difficultyLabel :: Text
+        difficultyLabel = case playerDifficulty player of
+            Easy   -> "Fácil"
+            Normal -> "Normal"
+            Hard   -> "Difícil"
+
     defaultLayout $ do
         setTitle "Explorar"
-        [whamlet|
-            <div .hero>
-                <h1>Explorar o mundo
-                <p .subtitle>#{worldName cfg} — #{weather cfg}
-
-            <div .section-box>
-                <h2>Onde deseja ir, #{playerName player}?
-
-                <div style="display:flex; gap:12px;">
-                    <form method=post action=@{ExploreR}>
-                        ^{tokenWidget}
-                        <input type=hidden name=destino value="floresta">
-                        <button .btn .btn-primary type=submit>
-                            🌲 Entrar na floresta
-
-                    <form method=post action=@{ExploreR}>
-                        ^{tokenWidget}
-                        <input type=hidden name=destino value="caverna">
-                        <button .btn .btn-primary type=submit>
-                            🕳 Explorar caverna
-
-            <div .section-box>
-                <p><a href=@{LogsR}>Ver log da aventura
-        |]
-
+        $(widgetFile "explore/explore")
 -- ── POST /explore ─────────────────────────────────────────────────────────────
 
 postExploreR :: Handler Html
@@ -305,32 +323,38 @@ postExploreR = withPlayer $ \player cfg -> do
 handleDestino :: Player -> GameConfig -> Maybe Text -> Handler Html
 handleDestino player cfg mDestino = do
     let dest :: Text
-        dest = fromMaybe "floresta" mDestino
-        (action, localeName) = case dest of
-            "caverna" -> (enterCave player,   "Caverna" :: Text)
-            _         -> (enterForest player, "Floresta" :: Text)
-        (description, logs) = runGameM cfg action
+        dest = fromMaybe "" mDestino
 
-    setSession "player-location" dest
-    appendLogsToSession logs
+    if dest == ""
+        then do
+            deleteSession "player-location"
+            redirect ExploreR
+        else do
+            let (action, localeName) = case dest of
+                    "caverna" -> (enterCave player,   "Caverna" :: Text)
+                    _         -> (enterForest player, "Floresta" :: Text)
+                (description, logs) = runGameM cfg action
 
-    defaultLayout $ do
-        setTitle "Explorando"
-        [whamlet|
-            <div .hero>
-                <h1>Explorando a #{localeName}
-                <p .subtitle>#{worldName cfg}
+            setSession "player-location" dest
+            appendLogsToSession logs
 
-            <div .section-box>
-                <p>#{description}
+            defaultLayout $ do
+                setTitle "Explorando"
+                [whamlet|
+                    <div .hero>
+                        <h1>Explorando a #{localeName}
+                        <p .subtitle>#{worldName cfg}
 
-            <div .section-box>
-                <h2>Log desta exploração
-                $forall entry <- logs
-                    <p .log-entry>-> #{entry}
+                    <div .section-box>
+                        <p>#{description}
 
-            ^{actionButtons}
-        |]
+                    <div .section-box>
+                        <h2>Log desta exploração
+                        $forall entry <- logs
+                            <p .log-entry>-> #{entry}
+
+                    ^{actionButtons}
+                |]
 
 -- Explora o local atual — sorteia um evento aleatório
 handleExplorarLocal :: Player -> GameConfig -> Handler Html

@@ -1,0 +1,100 @@
+$newline always
+
+<div .character-page>
+    <section .character-shell>
+        <div .top-stage>
+            <header .character-header>
+                <p .character-kicker>
+                    Arcane Initiation
+                <h1 .character-title>
+                    Escolha sua personagem
+                <p .character-subtitle>
+                    Escolha sua classe para entrar em Monad Quest. Cada trilha altera a forma como você atravessa o Reino de Lambda.
+
+        <form #characterForm .character-form method=post action=@{CharacterR}>
+            <input #selectedClass type=hidden name="class" value="">
+
+            <section #creationPanel .creation-panel .is-hidden>
+                <div .creation-frame>
+                    <p .creation-kicker>
+                        Character Setup
+                    <h2 .creation-title>
+                        Defina sua aventureira
+                    <p #classFeedback .creation-feedback>
+                        Classe selecionada: —
+
+                    <div .field-stack>
+                        <label .pixel-label for="playerName">
+                            Nome da personagem
+                        <input #playerName .pixel-input type=text name="name" placeholder="Digite seu nome" required>
+
+                        <label .pixel-label for="difficulty">
+                            Dificuldade
+                        <select #difficulty .pixel-select name="difficulty" required>
+                            <option value="">
+                                Escolha a dificuldade
+                            <option value="easy">
+                                Fácil
+                            <option value="normal">
+                                Normal
+                            <option value="hard">
+                                Difícil
+
+                    <div .creation-actions>
+                        <button .pixel-submit type=submit>
+                            Begin Quest
+
+            <section .class-grid aria-label="Seleção de classe">
+                <button .class-card type=button data-class="warrior" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                    <div .class-card-inner>
+                        <div .class-avatar aria-hidden="true">
+                            <img .class-image src=@{StaticR img_guerreira_png} alt="">
+                        <div .class-copy>
+                            <h2 .class-name>
+                                Guerreira
+                            <p .class-desc>
+                                Resiste ao colapso do reino com força, disciplina e presença em combate.
+
+                <button .class-card type=button data-class="mage" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                    <div .class-card-inner>
+                        <div .class-avatar aria-hidden="true">
+                            <img .class-image src=@{StaticR img_maga_png} alt="">
+                        <div .class-copy>
+                            <h2 .class-name>
+                                Maga
+                            <p .class-desc>
+                                Manipula vínculos arcanos e percebe falhas que passam despercebidas aos demais.
+
+                <button .class-card type=button data-class="rogue" aria-pressed="false">
+                    <span .card-glow aria-hidden="true">
+                    <span .card-sparkles aria-hidden="true">
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                        <span .sparkle>
+                    <div .class-card-inner>
+                        <div .class-avatar aria-hidden="true">
+                            <img .class-image src=@{StaticR img_ladina_png} alt="">
+                        <div .class-copy>
+                            <h2 .class-name>
+                                Ladina
+                            <p .class-desc>
+                                Lê rastros, evita armadilhas e alcança caminhos que outros sequer notam.

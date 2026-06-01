@@ -13,5 +13,6 @@
 /profile ProfileR GET
 /character CharacterR GET POST
 /explore ExploreR GET POST
+
 /battle BattleR GET POST
 /logs LogsR GET

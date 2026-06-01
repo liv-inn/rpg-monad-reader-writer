@@ -1,0 +1,363 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+    --bg-0: #120c0a;
+    --bg-1: #1d120f;
+    --panel: #efe6d2;
+    --panel-shadow: #c9b28a;
+    --ink: #20130f;
+    --ink-soft: #5a4133;
+    --accent: #8f3c2f;
+    --accent-dark: #5c241b;
+    --pixel-black: #000000;
+    --pixel-white: #fff7ea;
+    --pixel-red: #a14b3b;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(circle at top, rgba(180, 110, 56, 0.12), transparent 30%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+    color: var(--pixel-white);
+}
+
+.story-page {
+    min-height: 100vh;
+    padding: 32px 16px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.story-shell {
+    width: min(900px, 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+}
+
+.book-layer {
+    width: 100%;
+    text-align: center;
+    transition:
+        opacity 360ms steps(6),
+        transform 360ms steps(6),
+        visibility 0ms linear 360ms;
+}
+
+.story-book {
+    display: block;
+    width: min(760px, 100%);
+    margin: 0 auto;
+    image-rendering: auto;
+    filter: drop-shadow(0 18px 0 rgba(0, 0, 0, 0.18)) drop-shadow(0 28px 30px rgba(0, 0, 0, 0.28));
+    animation: bookFloat 2.8s steps(12) infinite;
+}
+
+.story-call,
+.story-subcall {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.story-call {
+    margin-top: 18px;
+    max-width: 32ch;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #f3e6c7;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.story-subcall {
+    margin-top: 10px;
+    max-width: 44ch;
+    font-family: 'VT323', monospace;
+    font-size: 28px;
+    line-height: 1.1;
+    color: #d8bf97;
+}
+
+.lore-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    transition:
+        opacity 260ms steps(6),
+        transform 260ms steps(6),
+        visibility 0ms linear 260ms;
+}
+
+.lore-panel.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px) scale(0.98);
+    pointer-events: none;
+}
+
+.pixel-frame {
+    position: relative;
+    width: min(760px, 100%);
+    padding: 46px 26px 28px;
+    background: var(--panel);
+    color: var(--ink);
+    border: 4px solid var(--pixel-black);
+    box-shadow:
+        0 0 0 4px var(--panel-shadow),
+        0 0 0 8px var(--pixel-black),
+        8px 8px 0 0 rgba(0, 0, 0, 0.55);
+}
+
+.pixel-frame::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 3px solid rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+}
+
+.pixel-corner {
+    position: absolute;
+    top: -4px;
+    width: 150px;
+    height: 84px;
+    pointer-events: none;
+}
+
+.corner-left {
+    left: -4px;
+}
+
+.corner-right {
+    right: -4px;
+    transform: scaleX(-1);
+}
+
+.pixel-corner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(to right, transparent 0 8px, #000 8px 16px, transparent 16px 24px, #000 24px 32px, transparent 32px 100%),
+        linear-gradient(to bottom, transparent 0 8px, #000 8px 16px, transparent 16px 24px, #000 24px 32px, transparent 32px 100%);
+    opacity: 0.12;
+}
+
+.corner-left::after,
+.corner-right::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(#000, #000) 0 0 / 92px 4px no-repeat,
+        linear-gradient(#000, #000) 0 0 / 4px 64px no-repeat,
+        linear-gradient(#000, #000) 20px 8px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 24px 12px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 28px 16px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 32px 20px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 36px 24px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 40px 24px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 44px 20px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 48px 16px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 52px 12px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 56px 8px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 60px 12px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 64px 16px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 68px 20px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 72px 24px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 76px 28px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 80px 32px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 84px 36px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 88px 40px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 92px 44px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 88px 48px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 84px 52px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 80px 56px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 76px 60px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 72px 64px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 16px 44px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 12px 48px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 8px 52px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 8px 56px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 12px 60px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 16px 64px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 20px 68px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 24px 72px / 4px 4px no-repeat,
+        linear-gradient(#000, #000) 28px 76px / 4px 4px no-repeat;
+    image-rendering: pixelated;
+}
+
+.panel-kicker {
+    margin: 0 0 16px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 1.8;
+    color: var(--accent);
+    text-transform: uppercase;
+}
+
+.panel-title {
+    margin: 0 0 22px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(20px, 2vw, 28px);
+    line-height: 1.6;
+    color: var(--ink);
+    text-shadow: 2px 2px 0 rgba(143, 60, 47, 0.18);
+}
+
+.panel-lead {
+    margin: 0 auto 18px;
+    max-width: 42ch;
+    text-align: center;
+    font-family: 'VT323', monospace;
+    font-size: 31px;
+    line-height: 1.08;
+    color: var(--ink);
+}
+
+.panel-text {
+    margin: 0 auto 14px;
+    max-width: 46ch;
+    font-family: 'VT323', monospace;
+    font-size: 27px;
+    line-height: 1.12;
+    color: var(--ink-soft);
+}
+
+.panel-actions {
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+}
+
+.pixel-button {
+    display: inline-block;
+    min-width: 220px;
+    padding: 14px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--pixel-white);
+    background: var(--pixel-red);
+    border: 4px solid var(--pixel-black);
+    box-shadow:
+        inset -4px -4px 0 0 var(--accent-dark),
+        inset 4px 4px 0 0 #c97a69,
+        6px 6px 0 0 rgba(0, 0, 0, 0.45);
+    text-transform: uppercase;
+    image-rendering: pixelated;
+}
+
+.pixel-button:hover,
+.pixel-button:focus-visible {
+    transform: translate(2px, 2px);
+    box-shadow:
+        inset -4px -4px 0 0 var(--accent-dark),
+        inset 4px 4px 0 0 #c97a69,
+        4px 4px 0 0 rgba(0, 0, 0, 0.45);
+}
+
+#storyScene.is-revealed .book-layer {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-18px) scale(0.94);
+    pointer-events: none;
+}
+
+#storyScene.is-revealed .lore-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+@keyframes bookFloat {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .story-page {
+        padding: 18px 12px 32px;
+    }
+
+    .story-shell {
+        min-height: auto !important;
+    }
+
+    .lore-panel {
+        position: relative;
+        inset: auto;
+    }
+
+    .lore-panel.is-hidden {
+        display: none;
+    }
+
+    #storyScene.is-revealed .book-trigger {
+        display: none;
+    }
+
+    .pixel-frame {
+        width: 100%;
+        padding: 38px 16px 20px;
+    }
+
+    .pixel-corner {
+        width: 108px;
+        height: 72px;
+    }
+
+    .panel-title {
+        font-size: 18px;
+    }
+
+    .panel-lead {
+        font-size: 24px;
+    }
+
+    .panel-text {
+        font-size: 22px;
+    }
+
+    .story-subcall {
+        font-size: 22px;
+    }
+
+    .pixel-button {
+        min-width: 100%;
+        font-size: 11px;
+    }
+}

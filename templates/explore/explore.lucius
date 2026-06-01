@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    background: #120c0a;
+}
+
+:root {
+    --text-main: #fff3db;
+    --text-soft: #dfc89d;
+    --gold: #e0b45c;
+    --gold-soft: #f5dd9b;
+    --panel-dark: rgba(16, 12, 10, 0.72);
+    --panel-border: #6f4320;
+    --panel-border-dark: #2f1a0d;
+    --btn-red: #9d4a39;
+    --btn-red-dark: #6d281d;
+    --btn-red-light: #c97765;
+    --btn-brown: #86603a;
+    --btn-brown-dark: #5b3b21;
+    --btn-brown-light: #c38f63;
+    --black: #000000;
+}
+
+.explore-page {
+    min-height: 100vh;
+    width: 100%;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: var(--text-main);
+}
+
+.explore-page.sky-sunny {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.28)),
+        url(@{StaticR img_explore_sunny_png});
+}
+
+.explore-page.sky-cloudy {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.38)),
+        url(@{StaticR img_explore_cloudy_png});
+}
+
+.explore-page.sky-storm {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.26), rgba(0, 0, 0, 0.52)),
+        url(@{StaticR img_explore_storm_png});
+}
+
+.explore-page.location-floresta {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.24), rgba(0, 0, 0, 0.50)),
+        url(@{StaticR img_forest_screen_png});
+}
+
+.explore-page.location-caverna {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.34), rgba(0, 0, 0, 0.58)),
+        url(@{StaticR img_cave_screen_png});
+}
+
+.explore-overlay {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+
+.explore-shell {
+    width: min(920px, 100%);
+}
+
+.explore-panel {
+    padding: 30px 24px;
+    text-align: center;
+    background: var(--panel-dark);
+    border: 4px solid var(--black);
+    box-shadow:
+        0 0 0 4px var(--panel-border),
+        0 0 0 8px var(--panel-border-dark),
+        12px 12px 0 rgba(0, 0, 0, 0.44);
+    backdrop-filter: blur(3px);
+}
+
+.explore-kicker {
+    margin: 0 0 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    line-height: 1.8;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.explore-title {
+    margin: 0 0 18px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.5;
+    color: var(--text-main);
+    text-shadow: 3px 3px 0 #000;
+}
+
+.explore-subtitle {
+    margin: 0 auto 18px;
+    max-width: 28ch;
+    font-family: 'VT323', monospace;
+    font-size: 34px;
+    line-height: 1.04;
+    color: var(--gold-soft);
+}
+
+.explore-status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.status-chip {
+    padding: 8px 12px;
+    border: 3px solid #000;
+    background: rgba(255, 244, 220, 0.10);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    line-height: 1.6;
+    color: var(--gold-soft);
+}
+
+.explore-copy {
+    margin-bottom: 26px;
+}
+
+.explore-copy p {
+    margin: 0 auto;
+    max-width: 42ch;
+    font-family: 'VT323', monospace;
+    font-size: 28px;
+    line-height: 1.08;
+    color: var(--text-soft);
+}
+
+.explore-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.explore-actions form {
+    margin: 0;
+}
+
+.explore-button {
+    width: 100%;
+    min-height: 74px;
+    padding: 14px 18px;
+    border: 4px solid #000;
+    background: var(--btn-red);
+    color: var(--text-main);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    text-transform: uppercase;
+    box-shadow:
+        inset -4px -4px 0 var(--btn-red-dark),
+        inset 4px 4px 0 var(--btn-red-light),
+        6px 6px 0 rgba(0, 0, 0, 0.42);
+    cursor: pointer;
+}
+
+.explore-button.is-alt {
+    background: var(--btn-brown);
+    box-shadow:
+        inset -4px -4px 0 var(--btn-brown-dark),
+        inset 4px 4px 0 var(--btn-brown-light),
+        6px 6px 0 rgba(0, 0, 0, 0.42);
+}
+
+.explore-links {
+    margin-top: 24px;
+}
+
+.explore-links a {
+    color: var(--gold-soft);
+    font-family: 'VT323', monospace;
+    font-size: 26px;
+    text-decoration: none;
+}
+
+.explore-links a:hover,
+.explore-links a:focus-visible {
+    text-decoration: underline;
+}
+
+@media only screen and (max-width: 720px) {
+    .explore-panel {
+        padding: 24px 16px;
+    }
+
+    .explore-title {
+        font-size: 20px;
+    }
+
+    .explore-subtitle {
+        font-size: 28px;
+    }
+
+    .explore-copy p {
+        font-size: 22px;
+    }
+
+    .explore-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .explore-button {
+        min-height: 68px;
+    }
+}
