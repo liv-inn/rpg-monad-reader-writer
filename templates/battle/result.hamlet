@@ -41,4 +41,6 @@ $newline always
                     $if showCreateChar
                         <a href=@{CharacterR}>Novo personagem
                     <a href=@{LogsR}>
-                        Ver log completo
+                        Ver log da aventura
+                    <a href=@{HomeR}>
+                        Voltar à página inicial

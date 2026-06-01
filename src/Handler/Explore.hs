@@ -21,6 +21,7 @@ data ExploreOutcome
     = NormalEvent
     | GainPotion
     | DrainHp Int      -- perde HP (mín 1), fica no local
+    | LosePotion       -- perde 1 poção do inventário (mín 0)
     | StartAmbush Int  -- perde HP e vai pra batalha
 
 data ExploreEvent = ExploreEvent
@@ -59,32 +60,44 @@ pickEventM rawRoll loc = do
 
 pickForestEvent :: Int -> ExploreEvent
 pickForestEvent roll
-    | roll < 20 = evPotion
-    | roll < 31 = evChildNpc
-    | roll < 43 = evGold "floresta"
-    | roll < 53 = evScroll
-    | roll < 64 = evHerbs
-    | roll < 71 = evForestCircle
-    | roll < 77 = evAbandonedVillage
-    | roll < 84 = evUpsideRiver
-    | roll < 90 = evDisconnectionZone
-    | roll < 95 = evAmbush
+    | roll < 12 = evPotion
+    | roll < 20 = evChildNpc
+    | roll < 27 = evBard
+    | roll < 34 = evGold "floresta"
+    | roll < 41 = evScroll
+    | roll < 47 = evHerbs
+    | roll < 53 = evForestCircle
+    | roll < 58 = evAbandonedVillage
+    | roll < 63 = evUpsideRiver
+    | roll < 68 = evBattlefield
+    | roll < 73 = evUpsideSnow
+    | roll < 78 = evForestMirror
+    | roll < 83 = evTreeFaces
+    | roll < 88 = evDisconnectionZone
+    | roll < 92 = evIllusionExit
+    | roll < 96 = evAmbush
+    | roll < 99 = evIdentityMirror
     | otherwise = evIllusion
 
 -- ── Eventos da Caverna ─────────────────────────────────────────────────────
 
 pickCaveEvent :: Int -> ExploreEvent
 pickCaveEvent roll
-    | roll < 20 = evPotion
-    | roll < 31 = evChildNpc
-    | roll < 43 = evGold "caverna"
-    | roll < 53 = evScroll
-    | roll < 64 = evHerbs
-    | roll < 71 = evCaveEcho
-    | roll < 77 = evDeepFootprints
-    | roll < 84 = evCaveSilence
-    | roll < 90 = evDisconnectionZone
-    | roll < 95 = evAmbush
+    | roll < 12 = evPotion
+    | roll < 20 = evChildNpc
+    | roll < 27 = evBard
+    | roll < 34 = evGold "caverna"
+    | roll < 41 = evScroll
+    | roll < 47 = evHerbs
+    | roll < 53 = evCaveEcho
+    | roll < 58 = evDeepFootprints
+    | roll < 63 = evCaveSilence
+    | roll < 68 = evBattlefield
+    | roll < 73 = evUpsideSnow
+    | roll < 79 = evDisconnectionZone
+    | roll < 84 = evIllusionExit
+    | roll < 91 = evAmbush
+    | roll < 96 = evIdentityMirror
     | otherwise = evIllusion
 
 -- ── Definição dos eventos ─────────────────────────────────────────────────
@@ -111,14 +124,14 @@ evGold :: Text -> ExploreEvent
 evGold "caverna" = ExploreEvent
     { evIcon    = "💰"
     , evTitle   = "Moedas na rocha"
-    , evBody    = "Numa fissura no basalto, algumas moedas douradas brilham fracamente à luz da tocha. Cunhagem antiga — de um reino que talvez já não exista mais. Você as guarda sem saber se ainda valem algo."
+    , evBody    = "Numa fissura no basalto, algumas moedas douradas brilham fracamente à luz da tocha. Cunhagem antiga, de um reino que talvez já não exista mais. Você as guarda sem saber se ainda valem algo."
     , evLog     = "Encontrou moedas antigas em uma fissura da caverna."
     , evOutcome = NormalEvent
     }
 evGold _ = ExploreEvent
     { evIcon    = "💰"
     , evTitle   = "Moedas na terra"
-    , evBody    = "Meio enterradas na lama úmida, algumas moedas de ouro reluzem entre as raízes. Alguém as perdeu há muito tempo — ou as deixou de propósito. O vínculo que as ligava ao dono foi cortado."
+    , evBody    = "Meio enterradas na lama úmida, algumas moedas de ouro reluzem entre as raízes. Alguém as perdeu há muito tempo, ou as deixou de propósito. O vínculo que as ligava ao dono foi cortado."
     , evLog     = "Encontrou moedas antigas enterradas na terra da floresta."
     , evOutcome = NormalEvent
     }
@@ -199,14 +212,65 @@ evCaveSilence = ExploreEvent
     , evOutcome = NormalEvent
     }
 
+-- ── NPC ──────────────────────────────────────────────────────────────────────
+
+evBard :: ExploreEvent
+evBard = ExploreEvent
+    { evIcon    = "🎶"
+    , evTitle   = "O Bardo do Amanhã"
+    , evBody    = "Sentado sobre uma pedra, um velho com um alaúde toca uma melodia estranhamente familiar. Você se aproxima e percebe que a letra fala de coisas que ainda não aconteceram: sua próxima batalha, um rosto que você ainda vai encontrar, uma escolha que ainda não foi feita. Ele não te olha. \"As músicas chegam antes dos eventos\", ele diz. \"Desde o Desligamento, só consigo cantar o que ainda não foi.\""
+    , evLog     = "Encontrou um bardo que só canta eventos futuros, o tempo desvinculado pelo Desligamento."
+    , evOutcome = NormalEvent
+    }
+
+-- ── Ambiente compartilhado ────────────────────────────────────────────────────
+
+evBattlefield :: ExploreEvent
+evBattlefield = ExploreEvent
+    { evIcon    = "⚔"
+    , evTitle   = "Campo de Batalha Eterno"
+    , evBody    = "O chão está marcado por tochas extintas e armaduras enferrujadas. Mas os mortos ainda lutam. Soldados translúcidos avançam e recuam, cruzam espadas com inimigos igualmente transparentes, caem e se levantam, sem parar, sem perceber que a guerra acabou. O vínculo entre ação e consequência foi cortado. Eles repetem o combate por não conseguirem processar o fim."
+    , evLog     = "Atravessou um campo de batalha onde os mortos ainda combatem em loop eterno."
+    , evOutcome = NormalEvent
+    }
+
+evUpsideSnow :: ExploreEvent
+evUpsideSnow = ExploreEvent
+    { evIcon    = "❄"
+    , evTitle   = "Neve ao Contrário"
+    , evBody    = "Em uma área perfeitamente circular de dez metros, flocos de neve sobem. Não há vento, não há magia visível. A neve simplesmente desobedece à queda, flutuando para cima com calma absoluta. Você atravessa a fronteira e os flocos param, suspensos ao redor do seu rosto. Quando você sai do círculo, eles voltam a subir. Nenhuma explicação. Nenhum motivo. O Desligamento raramente precisa de um."
+    , evLog     = "Encontrou uma área circular onde a neve cai para cima, gravidade desvinculada."
+    , evOutcome = NormalEvent
+    }
+
+-- ── Ambiente exclusivo da Floresta ────────────────────────────────────────────
+
+evForestMirror :: ExploreEvent
+evForestMirror = ExploreEvent
+    { evIcon    = "🪞"
+    , evTitle   = "Espelho Sem Moldura"
+    , evBody    = "No meio de uma clareira, sem apoio e sem moldura, um espelho paira no ar. Você se aproxima e seu reflexo te olha, mas não é hoje. As roupas são outras, o cansaço no rosto é diferente, e há uma ferida que você ainda não tem. O reflexo te observa por um momento. Então sorri levemente, como se soubesse de algo que você ainda vai descobrir. Quando você pisca, o espelho some."
+    , evLog     = "Encontrou um espelho flutuante que mostrava seu reflexo de um dia diferente."
+    , evOutcome = NormalEvent
+    }
+
+evTreeFaces :: ExploreEvent
+evTreeFaces = ExploreEvent
+    { evIcon    = "🌳"
+    , evTitle   = "Árvores com Rostos"
+    , evBody    = "Você para. Os troncos ao redor têm rostos. Não esculpidos, não gravados, são da própria madeira, como se sempre estivessem lá. Todos com a mesma expressão: confusos e com medo. Olhos abertos demais, bocas entreabertas, como se tivessem visto algo que não conseguem processar. Eles não se movem. Não falam. Só olham. Você caminha mais rápido."
+    , evLog     = "Passou por uma floresta onde as árvores tinham rostos, confusos e com medo."
+    , evOutcome = NormalEvent
+    }
+
 -- ── Armadilhas ────────────────────────────────────────────────────────────────
 
 evDisconnectionZone :: ExploreEvent
 evDisconnectionZone = ExploreEvent
     { evIcon    = "💀"
     , evTitle   = "Zona de Desligamento"
-    , evBody    = "O ar muda de textura. Seus pés ficam pesados, seus pensamentos perdem coesão. Você atravessou uma Zona de Desligamento — uma área onde os vínculos internos começam a se desfazer. Seus próprios laços musculares e nervosos enfraquecem momentaneamente. Você sai do outro lado, mas algo ficou para trás."
-    , evLog     = "Atravessou uma Zona de Desligamento — HP reduzido."
+    , evBody    = "O ar muda de textura. Seus pés ficam pesados, seus pensamentos perdem coesão. Você atravessou uma Zona de Desligamento, uma área onde os vínculos internos começam a se desfazer. Seus próprios laços musculares e nervosos enfraquecem momentaneamente. Você sai do outro lado, mas algo ficou para trás."
+    , evLog     = "Atravessou uma Zona de Desligamento. HP reduzido."
     , evOutcome = DrainHp 12
     }
 
@@ -214,7 +278,7 @@ evAmbush :: ExploreEvent
 evAmbush = ExploreEvent
     { evIcon    = "⚔"
     , evTitle   = "Emboscada!"
-    , evBody    = "Eles saem das sombras antes que você perceba. Criaturas do Desligamento — seres cujos vínculos com a razão foram cortados, restando só o instinto de destruir. Você recebe o primeiro golpe antes de poder reagir. Prepare-se para lutar enfraquecido."
+    , evBody    = "Eles saem das sombras antes que você perceba. Criaturas do Desligamento, seres cujos vínculos com a razão foram cortados, restando só o instinto de destruir. Você recebe o primeiro golpe antes de poder reagir. Prepare-se para lutar enfraquecido."
     , evLog     = "Caiu em uma emboscada e entrou em batalha com HP reduzido."
     , evOutcome = StartAmbush 20
     }
@@ -224,8 +288,26 @@ evIllusion = ExploreEvent
     { evIcon    = "✨"
     , evTitle   = "Ilusão de item"
     , evBody    = "Há brilho no chão que parece uma gema rara, pulsando suavemente. Você estende a mão. No instante em que seus dedos tocam, a ilusão colapsa e libera uma descarga de energia corrompida. Não havia nada real ali. Era uma armadilha de Desligamento, um falso vínculo criado para drenar quem o tocasse."
-    , evLog     = "Tocou uma ilusão de item de descarga de energia corrompida causou dano."
+    , evLog     = "Tocou uma ilusão de item. A descarga de energia corrompida causou dano."
     , evOutcome = DrainHp 8
+    }
+
+evIllusionExit :: ExploreEvent
+evIllusionExit = ExploreEvent
+    { evIcon    = "🌀"
+    , evTitle   = "Ilusão de Saída"
+    , evBody    = "Você encontra um caminho que parece levar para fora, mas depois de muitos passos, reconhece a mesma árvore retorcida, a mesma pedra com musgo, o mesmo galho caído. Você andou em círculos por tempo indeterminado. O Desligamento criou um laço sem fim, um falso vínculo entre o caminho e o destino. Quando finalmente consegue quebrar o loop, percebe que um de seus pertences foi consumido pelo campo ilusório."
+    , evLog     = "Preso em uma ilusão de saída. Andou em círculos e perdeu um item do inventário."
+    , evOutcome = LosePotion
+    }
+
+evIdentityMirror :: ExploreEvent
+evIdentityMirror = ExploreEvent
+    { evIcon    = "🪞"
+    , evTitle   = "Espelho de Identidade"
+    , evBody    = "O espelho surge do nada, parado no caminho. Seu reflexo te olha, mas com seus atributos invertidos. Onde você é forte, ele é fraco. Onde você é lento, ele é veloz. É uma cópia corrompida de você mesmo, produto do Desligamento tentando criar um vínculo falso entre identidade e existência. O reflexo dá um passo para fora do espelho. Você não tem escolha."
+    , evLog     = "Enfrentou um espelho de identidade. Combate contra uma versão invertida de si mesmo."
+    , evOutcome = StartAmbush 0
     }
 
 -- ── Helpers de sessão e autenticação ─────────────────────────────────────────
@@ -368,30 +450,22 @@ handleExplorarLocal player cfg = do
             let msg = "💀 Perdeu " <> tshow (curHp - newHp) <> " HP. HP atual: " <> tshow newHp
             renderNormalEvent cfg localeName evt (Just msg)
 
+        LosePotion -> do
+            mPotTxt <- lookupSession "player-potions"
+            let pots    = fromMaybe (0 :: Int) (mPotTxt >>= readMay . unpack)
+                newPots = max 0 (pots - 1)
+            setSession "player-potions" (tshow newPots)
+            let msg = if pots > 0
+                        then "🎒 Perdeu 1 Poção Pequena. Poções restantes: " <> tshow newPots
+                        else "🎒 Sem itens no inventário para perder."
+            renderNormalEvent cfg localeName evt (Just msg)
+
         StartAmbush dmg -> do
             (curHp, newHp) <- applyHpDrain dmg
-            let actual = curHp - newHp
-            defaultLayout $ do
-                setTitle "Emboscada!"
-                [whamlet|
-                    <div .hero>
-                        <h1>#{evIcon evt} #{evTitle evt}
-                        <p .subtitle>#{localeName} — #{worldName cfg}
-
-                    <div .section-box>
-                        <p>#{evBody evt}
-                        <p .log-entry>-> #{evLog evt}
-
-                    <div .section-box style="border-left:4px solid #c0392b; background:#fff5f5;">
-                        <p>⚠ Você recebeu <strong>#{show actual} de dano</strong> antes de poder reagir.
-                        <p>HP restante: <strong>#{show newHp}
-
-                    <div .section-box>
-                        <div style="display:flex; gap:12px; align-items:center;">
-                            <a .btn .btn-primary href=@{BattleR}>⚔ Lutar!
-                            <a .btn href=@{ExploreR}>Tentar fugir (escolher outro local)
-                        <p><a href=@{LogsR}>Ver log completo
-                |]
+            let msg = if dmg > 0
+                        then "⚠ Você recebeu " <> tshow (curHp - newHp) <> " de dano antes de poder reagir. HP restante: " <> tshow newHp
+                        else "⚠ Prepare-se para o combate."
+            renderNormalEvent cfg localeName evt (Just msg)
 
 -- Renderiza a tela de evento normal/positivo/dreno
 renderNormalEvent :: GameConfig -> Text -> ExploreEvent -> Maybe Text -> Handler Html
@@ -400,7 +474,7 @@ renderNormalEvent cfg localeName evt mStatus = do
     let currentLocation :: Text
         currentLocation = fromMaybe "floresta" mLoc
     defaultLayout $ do
-        setTitle "Exploração — Evento"
+        setTitle "Exploração: Evento"
         $(widgetFile "explore/event")
 
 -- Drena HP (mínimo 1) e retorna (hpAnterior, hpNovo)

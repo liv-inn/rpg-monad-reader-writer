@@ -15,6 +15,7 @@ import Import
     , (<$>)
     , tshow
     , setSession
+    , deleteSession
     , setTitle
     , whamlet
     , selectFieldList
@@ -84,6 +85,7 @@ postCharacterR = do
             setSession "player-hp" (tshow (initialPlayerHp cls))
             setSession "player-potions" "1"
             clearLogsFromSession
+            deleteSession "player-location"
 
             redirect ExploreR
 

@@ -44,6 +44,8 @@ $if currentLocation == "world"
                     <div .explore-links>
                         <a href=@{LogsR}>
                             Ver log da aventura
+                        <a href=@{HomeR}>
+                            Voltar à página inicial
 $else
     <div #exploreScene .explore-page .location-#{currentLocation}>
         <div .explore-overlay>
@@ -92,3 +94,5 @@ $else
                     <div .explore-links>
                         <a href=@{LogsR}>
                             Ver log da aventura
+                        <a href=@{HomeR}>
+                            Voltar à página inicial

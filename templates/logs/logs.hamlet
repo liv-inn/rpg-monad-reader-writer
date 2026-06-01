@@ -1,21 +1,30 @@
-<div .hero>
-    <h1>Histórico da aventura
-    <p .subtitle>
-        Linha do tempo acumulada a partir dos eventos produzidos pela Writer.
+$newline always
 
-<div .terminal-box>
-    $if null logs
-        <p>Nenhum evento foi registrado na sessão.
-    $else
-        $forall entry <- logs
-            <div .terminal-line>
-                <span .prompt>-> 
-                <span>#{entry}
+<div #logScene .log-page style="background-image: linear-gradient(rgba(0,0,0,0.38), rgba(0,0,0,0.62)), url(@{StaticR img_story_bg_monad_png})">
+    <div .log-overlay>
+        <section .log-shell>
+            <div .log-panel>
+                <p .log-kicker>
+                    Monad Quest
 
-<div .section-box>
-    <p>
-        <a .btn .btn-secondary href=@{ExploreR}>Voltar para exploração
-    <p>
-        <a .btn .btn-secondary href=@{BattleR}>Ir para combate
-    <p>
-        <a .btn .btn-secondary href=@{HomeR}>Voltar à página inicial
+                <h1 .log-title>
+                    Crônicas da Aventura
+
+                <p .log-subtitle>
+                    Tudo que aconteceu nesta jornada, registrado pela Writer.
+
+                <div .log-feed>
+                    $if null logs
+                        <p .log-empty>
+                            Nenhum evento foi registrado ainda.
+                    $else
+                        $forall entry <- logs
+                            <div .log-entry>
+                                <span .log-prompt>->
+                                <span .log-text>#{entry}
+
+                <div .log-links>
+                    <a href=@{ExploreR}>
+                        Voltar para exploração
+                    <a href=@{HomeR}>
+                        Voltar à página inicial

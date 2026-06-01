@@ -43,4 +43,6 @@ $newline always
                         <button .explore-link-btn type=submit>
                             Voltar ao mapa
                     <a href=@{LogsR}>
-                        Ver log completo
+                        Ver log da aventura
+                    <a href=@{HomeR}>
+                        Voltar à página inicial

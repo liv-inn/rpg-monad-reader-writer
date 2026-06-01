@@ -56,3 +56,5 @@ $newline always
                 <div .battle-links>
                     <a href=@{LogsR}>
                         Ver log da aventura
+                    <a href=@{HomeR}>
+                        Voltar à página inicial
