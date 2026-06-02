@@ -1,0 +1,9 @@
+<h2>Criação do personagem
+<p>
+    O sistema constrói um <code>GameConfig</code>, que concentra os parâmetros iniciais do mundo e é criado uma única vez e propagado durante todo o jogo por meio da mônada <strong>Reader</strong>, permitindo consulta compartilhada da configuração sem passagem explícita em cada chamada.
+<p>
+    O sistema persiste os dados principais e inicializa o estado da sessão.
+
+    <p>Dificuldade selecionada pelo jogador e rRegistro do personagem no banco de dados.
+    <p>Clima do mundo definido para a partida.
+    <p>Armazenamento do <strong>HP</strong> inicial e da <strong>poção</strong> inicial na sessão.

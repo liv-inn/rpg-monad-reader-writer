@@ -1,0 +1,7 @@
+    <h2>Bem-vindo à aventura
+    <p>
+        Monad: padrão que permite encadear computações carregando um contexto invisível.
+    <p>
+        Reader: mônada que carrega uma configuração somente de leitura; qualquer função consulta esse ambiente com <code>ask</code>.
+    <p>
+        Writer: mônada que acumula saídas, como logs; qualquer função registra informações com <code>tell</code>.

@@ -14,8 +14,7 @@ import Domain.Battle
 import Domain.SessionLog
 import System.Random (randomRIO)
 import Settings.StaticFiles
-
--- ── Chaves de sessão ──────────────────────────────────────────────────────────
+import Widgets.Help (helpWidget)
 
 keyPlayerHp :: Text
 keyPlayerHp = "battle-player-hp"
@@ -31,8 +30,6 @@ keyPersistHp = "player-hp"
 
 keyPotions :: Text
 keyPotions = "player-potions"
-
--- ── Sprites ───────────────────────────────────────────────────────────────────
 
 playerWinSprite :: PlayerClass -> Route App
 playerWinSprite Warrior = StaticR img_battle_win_guerreira_win_png
@@ -60,8 +57,6 @@ goblinWinSprite = StaticR img_battle_globin_globin_win_png
 
 goblinLoseSprite :: Route App
 goblinLoseSprite = StaticR img_battle_globin_globin_lose_png
-
--- ── Estado da batalha ─────────────────────────────────────────────────────────
 
 getBattleState :: Player -> GameConfig -> Handler BattleState
 getBattleState player cfg = do
@@ -93,8 +88,6 @@ clearBattleState = do
     deleteSession keyEnemyHp
     deleteSession keyRound
 
--- ── Helpers de renderização ───────────────────────────────────────────────────
-
 renderCombat :: Player -> GameConfig -> Text -> Text -> Int -> Int -> Int -> [Text] -> Bool -> Handler Html
 renderCombat player cfg battleHeading enemyNameT enemyHpVal playerHpVal potions roundLogs continuing = do
     mLoc <- lookupSession "player-location"
@@ -124,6 +117,7 @@ renderCombat player cfg battleHeading enemyNameT enemyHpVal playerHpVal potions 
 
     defaultLayout $ do
         setTitle "Combate"
+        helpWidget $(widgetFile "help/battle")
         $(widgetFile "battle/combat")
 
 renderResult
@@ -166,9 +160,8 @@ renderResult player cfg resultIcon resultHeading resultSubtitle resultLogs locVa
 
     defaultLayout $ do
         setTitle (toHtml resultHeading)
+        helpWidget $(widgetFile "help/battle")
         $(widgetFile "battle/result")
-
--- ── GET /battle ───────────────────────────────────────────────────────────────
 
 getBattleR :: Handler Html
 getBattleR = withPlayerB $ \player cfg -> do
@@ -181,8 +174,6 @@ getBattleR = withPlayerB $ \player cfg -> do
         "⚔ Combate"
         (enemyName enemy) (bsEnemyHp bs) (bsPlayerHp bs)
         potions [] False
-
--- ── POST /battle ──────────────────────────────────────────────────────────────
 
 postBattleR :: Handler Html
 postBattleR = withPlayerB $ \player cfg -> do
@@ -200,8 +191,6 @@ postBattleR = withPlayerB $ \player cfg -> do
         Just "pocao" -> handlePotion player cfg
         Just "fugir" -> handleFlee player cfg locVal locLabel
         _            -> handleAttack player cfg locVal locLabel
-
--- ── Poção ─────────────────────────────────────────────────────────────────────
 
 handlePotion :: Player -> GameConfig -> Handler Html
 handlePotion player cfg = do
@@ -235,8 +224,6 @@ handlePotion player cfg = do
                 (enemyName enemy) (bsEnemyHp newBs) (bsPlayerHp newBs)
                 newPots logs True
 
--- ── Fuga ──────────────────────────────────────────────────────────────────────
-
 handleFlee :: Player -> GameConfig -> Text -> Text -> Handler Html
 handleFlee player cfg locVal locLabel = do
     mHpTxt <- lookupSession keyPlayerHp
@@ -251,8 +238,6 @@ handleFlee player cfg locVal locLabel = do
         "🏃" "Você fugiu!" "Às vezes recuar é a melhor estratégia."
         logs locVal locLabel
         False 0 False False False
-
--- ── Atacar ────────────────────────────────────────────────────────────────────
 
 handleAttack :: Player -> GameConfig -> Text -> Text -> Handler Html
 handleAttack player cfg locVal locLabel = do
@@ -293,14 +278,10 @@ handleAttack player cfg locVal locLabel = do
                 logs locVal locLabel
                 False 0 True True False
 
--- ── Helper puro de round ──────────────────────────────────────────────────────
-
 runRoundPure :: GameConfig -> Player -> BattleState -> Int -> Int -> (BattleState, BattleResult, [Text])
 runRoundPure cfg player bs playerRoll enemyRoll =
     let ((newBs, result), logs) = runGameM cfg (runRound player bs playerRoll enemyRoll)
     in (newBs, result, logs)
-
--- ── Auth helpers ──────────────────────────────────────────────────────────────
 
 withPlayerB :: (Player -> GameConfig -> Handler Html) -> Handler Html
 withPlayerB action = do

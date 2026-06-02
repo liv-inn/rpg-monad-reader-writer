@@ -9,6 +9,8 @@ module Handler.Character where
 
 import Import
     ( ($)
+    , (.)
+    , (<>)
     , Show(show)
     , Applicative((<*>))
     , Maybe(Nothing, Just)
@@ -41,7 +43,6 @@ import Import
     , redirect
     , runInputPost
     , ireq
-    , toWidgetHead
     , addStylesheetRemote
     )
 import Domain.Player
@@ -52,14 +53,18 @@ import Domain.World
 import Domain.Battle (initialPlayerHp)
 import Domain.SessionLog
 import Settings.StaticFiles
+import Widgets.Help (helpWidget)
 
 getCharacterR :: Handler Html
 getCharacterR = do
     (formWidget, formEnctype) <- generateFormPost characterForm
     defaultLayout $ do
-        
-        addStylesheetRemote "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=VT323&display=swap"
+        addStylesheetRemote
+            "https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;700&family=VT323&display=swap"
         setTitle "Monad Quest | Character Creation"
+
+        helpWidget $(widgetFile "help/character")
+
         $(widgetFile "character/character")
 
 postCharacterR :: Handler Html

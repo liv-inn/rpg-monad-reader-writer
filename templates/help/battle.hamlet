@@ -1,0 +1,62 @@
+<h2>Parâmetros do combate
+<p>
+    Esta tela apresenta a configuração da batalha em função da dificuldade selecionada no início da aventura.
+<p>
+    O clima do mundo é derivado do <code>GameConfig</code>, enquanto os parâmetros de combate modulam a força do inimigo e o comportamento probabilístico do round.
+<p>
+    A tabela abaixo resume esses valores.
+
+<div .help-table-block>
+    <h3>Clima por dificuldade
+    <table .help-table>
+        <thead>
+            <tr>
+                <th>Parâmetro
+                <th>Fácil
+                <th>Normal
+                <th>Difícil
+        <tbody>
+            <tr>
+                <td>Clima
+                <td>Céu claro
+                <td>Nublado
+                <td>Tempestade arcana
+
+<div .help-table-block>
+    <h3>Atributos do combate
+    <table .help-table>
+        <thead>
+            <tr>
+                <th>Parâmetro
+                <th>Fácil
+                <th>Normal
+                <th>Difícil
+        <tbody>
+            <tr>
+                <td>HP do inimigo
+                <td>30
+                <td>60
+                <td>90
+            <tr>
+                <td>Dano do inimigo
+                <td>8
+                <td>16
+                <td>24
+            <tr>
+                <td>Crítico do jogador
+                <td>30%
+                <td>20%
+                <td>10%
+            <tr>
+                <td>Crítico do inimigo
+                <td>5%
+                <td>15%
+                <td>30%
+            <tr>
+                <td>Bias do roll
+                <td>-10
+                <td>0
+                <td>+15
+
+<p>
+    Em termos conceituais, a dificuldade selecionada altera o ambiente de execução compartilhado pelo jogo, o que se alinha ao uso da mônada <strong>Reader</strong> para transportar configuração imutável ao longo da computação.

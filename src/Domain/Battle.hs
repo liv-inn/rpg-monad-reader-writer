@@ -19,7 +19,11 @@ import Import
 import Control.Monad.Reader (ask)
 import Control.Monad.Writer.Strict (tell)
 import Domain.Player
+    ( Difficulty(..),
+      Player(playerName, playerClass),
+      PlayerClass(..) )
 import Domain.World
+    ( GameConfig(baseDifficulty, enemyMultiplier), GameM )
 
 -- ── Tipos ─────────────────────────────────────────────────────────────────────
 
