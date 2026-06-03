@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-
 html, body {
     min-height: 100%;
 }
@@ -237,7 +235,7 @@ body {
     background: var(--btn-red);
     color: var(--text-main);
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
+    font-size: 14px;
     line-height: 1.6;
     text-align: center;
     text-transform: uppercase;

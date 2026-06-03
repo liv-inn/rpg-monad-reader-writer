@@ -123,8 +123,9 @@ helpWidget inner = do
 
         .help-panel {
             position: relative;
-            width: 580px;
-            min-height: 380px;
+            width: 820px;
+            max-width: 95vw;
+            min-height: 540px;
             background-image: url(/static/img/help-bttn/panel.png);
             background-size: 100% 100%;
             background-repeat: no-repeat;
@@ -136,10 +137,10 @@ helpWidget inner = do
 
         .help-panel-body {
             position: absolute;
-            top: 72px;
-            left: 74px;
-            right: 74px;
-            bottom: 62px;
+            top: 100px;
+            left: 104px;
+            right: 104px;
+            bottom: 88px;
             overflow-y: auto;
             font-family: "Pixelify Sans", sans-serif;
             color: #3a2a1a;
@@ -161,7 +162,7 @@ helpWidget inner = do
         }
 
         .help-panel-body h2 {
-            font-size: 1.4rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: #4b2f1f;
             margin: 0 0 0.9rem;
@@ -172,7 +173,7 @@ helpWidget inner = do
         }
 
         .help-panel-body p {
-            font-size: 1rem;
+            font-size: 1.2rem;
             font-weight: 400;
             line-height: 1.7;
             color: #5a4030;
@@ -182,12 +183,12 @@ helpWidget inner = do
 
         .help-close {
             position: absolute;
-            top: 14px;
-            right: 18px;
+            top: 18px;
+            right: 24px;
             background: transparent;
             border: none;
             color: #4b2f1f;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-family: "Pixelify Sans", sans-serif;
             cursor: pointer;
             line-height: 1;
@@ -354,7 +355,7 @@ helpWidget inner = do
             }
         }
         .help-panel-body h3 {
-    font-size: 1.05rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: #4b2f1f;
     margin: 1rem 0 0.55rem;
@@ -369,7 +370,7 @@ helpWidget inner = do
     width: 100%;
     border-collapse: collapse;
     font-family: "Pixelify Sans", sans-serif;
-    font-size: 0.92rem;
+    font-size: 1.15rem;
     color: #3a2a1a;
     background: rgba(255, 248, 235, 0.58);
     border: 1px solid rgba(75, 47, 31, 0.22);
@@ -379,7 +380,7 @@ helpWidget inner = do
 
 .help-table th,
 .help-table td {
-    padding: 0.55rem 0.65rem;
+    padding: 0.65rem 0.8rem;
     text-align: left;
     border: 1px solid rgba(75, 47, 31, 0.16);
 }
@@ -398,6 +399,33 @@ helpWidget inner = do
 
 .help-table tbody tr:nth-child(even) td {
     background: rgba(75, 47, 31, 0.04);
+}
+
+.help-code-block {
+    background: #150d06;
+    border-left: 3px solid #7a5a3a;
+    border-radius: 0 4px 4px 0;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0 1.1rem;
+    overflow-x: auto;
+}
+
+.help-code-block code {
+    display: block !important;
+    font-family: "Courier New", Courier, monospace !important;
+    font-size: 1rem !important;
+    color: #cbbfa8 !important;
+    line-height: 1.65 !important;
+    white-space: pre !important;
+    background: transparent !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+}
+
+.help-cm {
+    color: #6b8a6b;
+    font-style: italic;
 }
     |]
 

@@ -60,3 +60,27 @@
 
 <p>
     Em termos conceituais, a dificuldade selecionada altera o ambiente de execução compartilhado pelo jogo, o que se alinha ao uso da mônada <strong>Reader</strong> para transportar configuração imutável ao longo da computação.
+
+<h3>Domain/Battle.hs · Handler/Battle.hs
+<div .help-code-block>
+    <code>cfg <- ask <span .help-cm>-- Reader: "qual é a dificuldade?"</span>
+    <code>let critChance = if baseDifficulty cfg == Hard then 30 else 15
+    <code>&nbsp;
+    <code>tell ["⚔ Causou 12 de dano"]      <span .help-cm>-- Writer: anota o golpe</span>
+    <code>tell ["💥 CRÍTICO! Dano dobrado!"] <span .help-cm>-- Writer: anota o crítico</span>
+    <code>&nbsp;
+    <code><span .help-cm>-- no handler, fora do monad:</span>
+    <code>let (newBs, result, logs) =
+    <code>      runRoundPure cfg player bs playerRoll enemyRoll
+    <code>appendLogsToSession logs  <span .help-cm>-- salva os logs do Writer na sessão</span>
+
+<h3>Domain/World.hs · Domain/Battle.hs
+<div .help-code-block>
+    <code>type GameM a = ReaderT GameConfig (Writer GameLog)
+    <code>&nbsp;
+    <code>cfg <- ask
+    <code>let enemyAtk = 8 * enemyMultiplier cfg
+    <code>&nbsp;
+    <code>cfg <- ask
+    <code>let isCritPlayer =
+    <code>  playerRoll &lt; critChancePlayer (baseDifficulty cfg)

@@ -117,6 +117,7 @@ renderCombat player cfg battleHeading enemyNameT enemyHpVal playerHpVal potions 
 
     defaultLayout $ do
         setTitle "Combate"
+        addStylesheetRemote "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
         helpWidget $(widgetFile "help/battle")
         $(widgetFile "battle/combat")
 
@@ -160,6 +161,7 @@ renderResult player cfg resultIcon resultHeading resultSubtitle resultLogs locVa
 
     defaultLayout $ do
         setTitle (toHtml resultHeading)
+        addStylesheetRemote "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
         helpWidget $(widgetFile "help/battle")
         $(widgetFile "battle/result")
 

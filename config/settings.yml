@@ -36,5 +36,5 @@ database:
   database: "_env:YESOD_SQLITE_DATABASE:haskell-a2.sqlite3"
   poolsize: "_env:YESOD_SQLITE_POOLSIZE:10"
 
-copyright: Made with 🩷 and 🧠 by Liv, Mell & Nat
+copyright: Made with 🩷 
 #analytics: UA-YOURCODE

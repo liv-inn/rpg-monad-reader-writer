@@ -3,17 +3,18 @@
     Esta tela mostra como o sistema combina leitura de configuração e registro de eventos durante a execução do jogo.
 <p>
     No trecho abaixo, a computação consulta a dificuldade armazenada no ambiente e, em seguida, registra no log o ajuste aplicado ao sorteio.
-<p> Explore.hs:48
+
+<h3>Handler/Explore.hs
 <div .help-code-block>
-    <code>pickEventM rawRoll loc = do <br>
-    <code>cfg  <- ask <br>
-    <code>let bias = case baseDifficulty cfg of<br>
-                   <code>Hard -> 15<br>
-                   <code>Easy -> -10<br>
-                   <code>_    -> 0<br>
-    <code>tell ["ajuste: " &lt;&gt; tshow bias &lt;&gt; "..."]<br>
-    <code>pure (pickEvent (rawRoll + bias) loc)</code></pre>
+    <code>pickEventM rawRoll loc = do
+    <code>  cfg  <- ask
+    <code>  let bias = case baseDifficulty cfg of
+    <code>               Hard ->  15
+    <code>               Easy -> -10
+    <code>               _    ->   0
+    <code>  tell ["ajuste: " &lt;&gt; tshow bias &lt;&gt; "..."]
+    <code>  pure (pickEvent (rawRoll + bias) loc)
 
 <p>
-    A operação <code>ask</code> obtém o <code>GameConfig</code> do ambiente compartilhado, caracterizando o uso da mônada <strong>Reader</strong>. 
+    A operação <code>ask</code> obtém o <code>GameConfig</code> do ambiente compartilhado, caracterizando o uso da mônada <strong>Reader</strong>.
 <p>
